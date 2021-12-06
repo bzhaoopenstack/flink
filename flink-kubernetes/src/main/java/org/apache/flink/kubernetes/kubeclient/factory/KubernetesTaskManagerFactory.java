@@ -20,6 +20,7 @@ package org.apache.flink.kubernetes.kubeclient.factory;
 
 import org.apache.flink.kubernetes.kubeclient.FlinkPod;
 import org.apache.flink.kubernetes.kubeclient.decorators.CmdTaskManagerDecorator;
+import org.apache.flink.kubernetes.kubeclient.decorators.CustomerizedConfDecorator;
 import org.apache.flink.kubernetes.kubeclient.decorators.EnvSecretsDecorator;
 import org.apache.flink.kubernetes.kubeclient.decorators.FlinkConfMountDecorator;
 import org.apache.flink.kubernetes.kubeclient.decorators.HadoopConfMountDecorator;
@@ -44,6 +45,7 @@ public class KubernetesTaskManagerFactory {
         final KubernetesStepDecorator[] stepDecorators =
                 new KubernetesStepDecorator[] {
                     new InitTaskManagerDecorator(kubernetesTaskManagerParameters),
+                    new CustomerizedConfDecorator(kubernetesTaskManagerParameters),
                     new EnvSecretsDecorator(kubernetesTaskManagerParameters),
                     new MountSecretsDecorator(kubernetesTaskManagerParameters),
                     new CmdTaskManagerDecorator(kubernetesTaskManagerParameters),

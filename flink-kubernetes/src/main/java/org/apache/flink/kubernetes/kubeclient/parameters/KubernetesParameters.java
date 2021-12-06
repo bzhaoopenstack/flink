@@ -67,7 +67,7 @@ public interface KubernetesParameters {
 
     /** A map of user-specified annotations that are set to the JobManager and TaskManager pods. */
     Map<String, String> getAnnotations();
-
+    Map<String, String> getCustomerizedAnnotations();
     /**
      * A collection of tolerations that are set to the JobManager and TaskManager Pod(s). Kubernetes
      * taints and tolerations work together to ensure that pods are not scheduled onto inappropriate
@@ -107,4 +107,6 @@ public interface KubernetesParameters {
      * container(s).
      */
     List<Map<String, String>> getEnvironmentsFromSecrets();
+
+    String getPodSchedulerName();
 }

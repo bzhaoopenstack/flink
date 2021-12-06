@@ -202,4 +202,14 @@ public abstract class AbstractKubernetesParameters implements KubernetesParamete
                 .getOptional(KubernetesConfigOptions.KUBERNETES_ENV_SECRET_KEY_REF)
                 .orElse(Collections.emptyList());
     }
+
+    @Override
+    public Map<String, String> getCustomerizedAnnotations() {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public String getPodSchedulerName() {
+        return new String("");
+    }
 }

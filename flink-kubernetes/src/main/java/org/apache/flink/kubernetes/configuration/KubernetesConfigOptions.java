@@ -293,6 +293,22 @@ public class KubernetesConfigOptions {
                             "The user-specified annotations that are set to the TaskManager pod. The value could be "
                                     + "in the form of a1:v1,a2:v2");
 
+    public static final ConfigOption<Map<String, String>> JOB_MANAGER_CUSTOMERIZED_ANNOTATIONS =
+            key("kubernetes.jobmanager.customerized.annotations")
+                    .mapType()
+                    .noDefaultValue()
+                    .withDescription(
+                            "The user-specified annotations that are set to the JobManager pod. The value could be "
+                                    + "in the form of a1:v1,a2:v2");
+
+    public static final ConfigOption<Map<String, String>> TASK_MANAGER_CUSTOMERIZED_ANNOTATIONS =
+            key("kubernetes.taskmanager.customerized.annotations")
+                    .mapType()
+                    .noDefaultValue()
+                    .withDescription(
+                            "The user-specified annotations that are set to the TaskManager pod. The value could be "
+                                    + "in the form of a1:v1,a2:v2");
+
     public static final ConfigOption<List<Map<String, String>>> JOB_MANAGER_TOLERATIONS =
             key("kubernetes.jobmanager.tolerations")
                     .mapType()
@@ -412,6 +428,26 @@ public class KubernetesConfigOptions {
                                     + "'. If not explicitly configured, config option '"
                                     + KUBERNETES_POD_TEMPLATE_FILE_KEY
                                     + "' will be used.");
+
+    public static final ConfigOption<String> JOB_MANAGER_POD_SCHEDULER_NAME =
+            key("kubernetes.jobmanager.pod_scheduler_name")
+                    .stringType()
+                    .noDefaultValue()
+                    .withDescription(
+                            "Specify the kubernetes pod scheduler for jobmanager pods of deployment. "
+                                    + "The default value is using the kubernetes default pod scheduler. "
+                                    + "For customrized kubernetes pod scheduler, allow to set pod scheduler "
+                                    + "for customerized pod schduling.");
+
+    public static final ConfigOption<String> TASK_MANAGER_POD_SCHEDULER_NAME =
+            key("kubernetes.taskmanager.pod_scheduler_name")
+                    .stringType()
+                    .noDefaultValue()
+                    .withDescription(
+                            "Specify the kubernetes pod scheduler for taskmanager pods of deployment. "
+                                    + "The default value is using the kubernetes default pod scheduler. "
+                                    + "For customrized kubernetes pod scheduler, allow to set pod scheduler "
+                                    + "for customerized pod schduling.");
 
     /**
      * This option is here only for documentation generation, it is the fallback key of

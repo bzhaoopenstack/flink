@@ -97,6 +97,13 @@ public class KubernetesTaskManagerParameters extends AbstractKubernetesParameter
     }
 
     @Override
+    public Map<String, String> getCustomerizedAnnotations() {
+        return flinkConfig
+                .getOptional(KubernetesConfigOptions.TASK_MANAGER_CUSTOMERIZED_ANNOTATIONS)
+                .orElse(Collections.emptyMap());
+    }
+
+    @Override
     public List<Map<String, String>> getTolerations() {
         return flinkConfig
                 .getOptional(KubernetesConfigOptions.TASK_MANAGER_TOLERATIONS)
@@ -152,5 +159,10 @@ public class KubernetesTaskManagerParameters extends AbstractKubernetesParameter
 
     public ContaineredTaskManagerParameters getContaineredTaskManagerParameters() {
         return containeredTaskManagerParameters;
+    }
+
+    @Override
+    public String getPodSchedulerName() {
+        return flinkConfig.get(KubernetesConfigOptions.TASK_MANAGER_POD_SCHEDULER_NAME);
     }
 }

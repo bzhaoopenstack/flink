@@ -457,6 +457,10 @@ public class KubernetesUtils {
         return serviceAccount;
     }
 
+    public static String getPodSchedulerName(FlinkPod flinkPod) {
+        return flinkPod.getPodWithoutMainContainer().getSpec().getSchedulerName();
+    }
+
     /**
      * Try to get the pretty print yaml for Kubernetes resource.
      *
