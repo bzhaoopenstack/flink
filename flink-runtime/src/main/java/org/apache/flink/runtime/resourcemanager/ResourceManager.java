@@ -1249,8 +1249,11 @@ public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable>
         }
 
         @Override
-        public boolean allocateResource(WorkerResourceSpec workerResourceSpec) {
+        public boolean allocateResource(JobID jobId, WorkerResourceSpec workerResourceSpec) {
             validateRunsInMainThread();
+            if (workerResourceSpec.getNumSlots() >= 1) {
+                workerResourceSpec.addAssociatedJob(jobId);
+            }
             return startNewWorker(workerResourceSpec);
         }
 

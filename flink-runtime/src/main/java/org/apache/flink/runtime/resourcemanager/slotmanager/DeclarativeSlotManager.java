@@ -646,7 +646,7 @@ public class DeclarativeSlotManager implements SlotManager {
                 pendingSlots = matchingResult.getNewAvailableResources();
                 if (!matchingResult.isSuccessfulMatching()) {
                     final WorkerAllocationResult allocationResult =
-                            tryAllocateWorkerAndReserveSlot(profile, pendingSlots);
+                            tryAllocateWorkerAndReserveSlot(jobId, profile, pendingSlots);
                     pendingSlots = allocationResult.getNewAvailableResources();
                     if (!allocationResult.isSuccessfulAllocating()
                             && sendNotEnoughResourceNotifications) {
@@ -684,10 +684,10 @@ public class DeclarativeSlotManager implements SlotManager {
         return new MatchingResult(false, pendingSlots);
     }
 
-    private WorkerAllocationResult tryAllocateWorkerAndReserveSlot(
+    private WorkerAllocationResult tryAllocateWorkerAndReserveSlot(JobID jobId,
             ResourceProfile profile, ResourceCounter pendingSlots) {
         Optional<ResourceRequirement> newlyFulfillableRequirements =
-                taskExecutorManager.allocateWorker(profile);
+                taskExecutorManager.allocateWorker(jobId, profile);
         if (newlyFulfillableRequirements.isPresent()) {
             ResourceRequirement newSlots = newlyFulfillableRequirements.get();
             // reserve one of the new slots

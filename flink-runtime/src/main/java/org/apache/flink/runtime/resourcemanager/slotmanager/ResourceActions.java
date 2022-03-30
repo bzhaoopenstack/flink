@@ -43,7 +43,7 @@ public interface ResourceActions {
      * @param workerResourceSpec for the to be allocated worker
      * @return whether the resource can be allocated
      */
-    boolean allocateResource(WorkerResourceSpec workerResourceSpec);
+    boolean allocateResource(JobID jobId, WorkerResourceSpec workerResourceSpec);
 
     /**
      * Notifies that an allocation failure has occurred.

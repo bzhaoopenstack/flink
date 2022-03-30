@@ -18,6 +18,7 @@
 
 package org.apache.flink.runtime.resourcemanager;
 
+import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.common.resources.CPUResource;
 import org.apache.flink.api.common.resources.ExternalResource;
 import org.apache.flink.configuration.MemorySize;
@@ -30,8 +31,10 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -58,6 +61,15 @@ public final class WorkerResourceSpec implements Serializable {
 
     private final Map<String, ExternalResource> extendedResources;
 
+    public Set<JobID> getAssociatedJobs() {
+        return associatedJobs;
+    }
+
+    private final Set<JobID> associatedJobs;
+
+    public void addAssociatedJob(JobID jobId) {this.associatedJobs.add(jobId);}
+
+
     private WorkerResourceSpec(
             CPUResource cpuCores,
             MemorySize taskHeapSize,
@@ -80,6 +92,7 @@ public final class WorkerResourceSpec implements Serializable {
         Preconditions.checkArgument(
                 this.extendedResources.size() == extendedResources.size(),
                 "Duplicate resource name encountered in external resources.");
+        this.associatedJobs = new HashSet<>();
     }
 
     public static WorkerResourceSpec fromTaskExecutorProcessSpec(

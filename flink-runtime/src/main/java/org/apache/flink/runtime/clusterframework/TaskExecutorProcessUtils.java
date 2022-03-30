@@ -193,7 +193,8 @@ public class TaskExecutorProcessUtils {
                 flinkMemory,
                 jvmMetaspaceAndOverhead,
                 workerResourceSpec.getNumSlots(),
-                workerResourceSpec.getExtendedResources().values());
+                workerResourceSpec.getExtendedResources().values(),
+                workerResourceSpec.getAssociatedJobs());
     }
 
     private static TaskExecutorProcessSpec createMemoryProcessSpec(
