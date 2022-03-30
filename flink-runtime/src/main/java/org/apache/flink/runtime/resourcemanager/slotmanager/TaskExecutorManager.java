@@ -18,6 +18,7 @@
 package org.apache.flink.runtime.resourcemanager.slotmanager;
 
 import org.apache.flink.annotation.VisibleForTesting;
+import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.common.time.Time;
 import org.apache.flink.runtime.clusterframework.types.ResourceProfile;
 import org.apache.flink.runtime.clusterframework.types.SlotID;
@@ -251,7 +252,7 @@ class TaskExecutorManager implements AutoCloseable {
      * @return an upper bound resource requirement that can be fulfilled by the new worker, if one
      *     was allocated
      */
-    public Optional<ResourceRequirement> allocateWorker(
+    public Optional<ResourceRequirement> allocateWorker(JobID jobId,
             ResourceProfile requestedSlotResourceProfile) {
         final int numRegisteredSlots = getNumberRegisteredSlots();
         final int numPendingSlots = getNumberPendingTaskManagerSlots();
@@ -269,7 +270,7 @@ class TaskExecutorManager implements AutoCloseable {
             return Optional.empty();
         }
 
-        if (!resourceActions.allocateResource(defaultWorkerResourceSpec)) {
+        if (!resourceActions.allocateResource(jobId, defaultWorkerResourceSpec)) {
             // resource cannot be allocated
             return Optional.empty();
         }
@@ -360,7 +361,7 @@ class TaskExecutorManager implements AutoCloseable {
     private int allocateWorkers(int workerNum) {
         int allocatedWorkerNum = 0;
         for (int i = 0; i < workerNum; ++i) {
-            if (allocateWorker(defaultSlotResourceProfile).isPresent()) {
+            if (allocateWorker(null, defaultSlotResourceProfile).isPresent()) {
                 ++allocatedWorkerNum;
             } else {
                 break;

@@ -721,7 +721,7 @@ public class FineGrainedSlotManager implements SlotManager {
             return false;
         }
 
-        if (!resourceActions.allocateResource(
+        if (!resourceActions.allocateResource(null,
                 WorkerResourceSpec.fromTotalResourceProfile(
                         pendingTaskManager.getTotalResourceProfile(),
                         pendingTaskManager.getNumSlots()))) {

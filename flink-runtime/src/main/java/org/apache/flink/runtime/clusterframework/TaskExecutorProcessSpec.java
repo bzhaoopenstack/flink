@@ -19,6 +19,7 @@
 package org.apache.flink.runtime.clusterframework;
 
 import org.apache.flink.annotation.VisibleForTesting;
+import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.common.resources.CPUResource;
 import org.apache.flink.api.common.resources.ExternalResource;
 import org.apache.flink.configuration.MemorySize;
@@ -32,6 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -97,6 +99,12 @@ public class TaskExecutorProcessSpec extends CommonProcessMemorySpec<TaskExecuto
 
     private final Map<String, ExternalResource> extendedResources;
 
+    public Set<JobID> getAssociatedJobs() {
+        return associatedJobs;
+    }
+
+    private Set<JobID> associatedJobs;
+
     @VisibleForTesting
     public TaskExecutorProcessSpec(
             CPUResource cpuCores,
@@ -108,7 +116,8 @@ public class TaskExecutorProcessSpec extends CommonProcessMemorySpec<TaskExecuto
             MemorySize managedMemorySize,
             MemorySize jvmMetaspaceSize,
             MemorySize jvmOverheadSize,
-            Collection<ExternalResource> extendedResources) {
+            Collection<ExternalResource> extendedResources,
+            Set<JobID> associatedJobs) {
 
         this(
                 cpuCores,
@@ -121,7 +130,20 @@ public class TaskExecutorProcessSpec extends CommonProcessMemorySpec<TaskExecuto
                         managedMemorySize),
                 new JvmMetaspaceAndOverhead(jvmMetaspaceSize, jvmOverheadSize),
                 1,
-                extendedResources);
+                extendedResources,
+                associatedJobs);
+    }
+
+    protected TaskExecutorProcessSpec(
+            CPUResource cpuCores,
+            TaskExecutorFlinkMemory flinkMemory,
+            JvmMetaspaceAndOverhead jvmMetaspaceAndOverhead,
+            int numSlots,
+            Collection<ExternalResource> extendedResources,
+            Set<JobID> associatedJobs) {
+        this(cpuCores, flinkMemory, jvmMetaspaceAndOverhead, numSlots, extendedResources);
+        this.associatedJobs = null;
+
     }
 
     protected TaskExecutorProcessSpec(
@@ -141,6 +163,7 @@ public class TaskExecutorProcessSpec extends CommonProcessMemorySpec<TaskExecuto
         Preconditions.checkArgument(
                 this.extendedResources.size() == extendedResources.size(),
                 "Duplicate resource name encountered in external resources.");
+        this.associatedJobs = null;
     }
 
     public CPUResource getCpuCores() {
