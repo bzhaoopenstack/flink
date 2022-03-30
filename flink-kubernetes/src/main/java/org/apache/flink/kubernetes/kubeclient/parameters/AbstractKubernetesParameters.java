@@ -18,6 +18,7 @@
 
 package org.apache.flink.kubernetes.kubeclient.parameters;
 
+import org.apache.flink.api.common.JobID;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.DeploymentOptionsInternal;
 import org.apache.flink.kubernetes.configuration.KubernetesConfigOptions;
@@ -32,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.apache.flink.kubernetes.configuration.KubernetesConfigOptions.CONTAINER_IMAGE_PULL_SECRETS;
 import static org.apache.flink.kubernetes.utils.Constants.CONFIG_FILE_LOG4J_NAME;
@@ -44,8 +46,15 @@ public abstract class AbstractKubernetesParameters implements KubernetesParamete
 
     protected final Configuration flinkConfig;
 
-    public AbstractKubernetesParameters(Configuration flinkConfig) {
+    public Set<JobID> getAssociatedJobs() {
+        return associatedJobs;
+    }
+
+    protected final Set<JobID> associatedJobs;
+
+    public AbstractKubernetesParameters(Configuration flinkConfig, Set<JobID> associatedJobs) {
         this.flinkConfig = checkNotNull(flinkConfig);
+        this.associatedJobs = associatedJobs;
     }
 
     public Configuration getFlinkConfiguration() {
@@ -205,5 +214,20 @@ public abstract class AbstractKubernetesParameters implements KubernetesParamete
 
     public boolean isHostNetworkEnabled() {
         return flinkConfig.getBoolean(KubernetesConfigOptions.KUBERNETES_HOSTNETWORK_ENABLED);
+    }
+
+    @Override
+    public Map<String, String> getCustomizedAnnotations() {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public String getPodSchedulerName() {
+        return new String("");
+    }
+
+    @Override
+    public Map<String, String> getPodCustomizedConfig() {
+        return Collections.emptyMap();
     }
 }

@@ -27,6 +27,7 @@ import org.apache.flink.kubernetes.configuration.KubernetesConfigOptions;
 import org.apache.flink.kubernetes.configuration.KubernetesResourceManagerDriverConfiguration;
 import org.apache.flink.kubernetes.kubeclient.FlinkKubeClient;
 import org.apache.flink.kubernetes.kubeclient.FlinkPod;
+import org.apache.flink.kubernetes.kubeclient.KubernetesTaskManagerSpecification;
 import org.apache.flink.kubernetes.kubeclient.factory.KubernetesTaskManagerFactory;
 import org.apache.flink.kubernetes.kubeclient.parameters.KubernetesTaskManagerParameters;
 import org.apache.flink.kubernetes.kubeclient.resources.KubernetesPod;
@@ -164,10 +165,11 @@ public class KubernetesResourceManagerDriver
             TaskExecutorProcessSpec taskExecutorProcessSpec) {
         final KubernetesTaskManagerParameters parameters =
                 createKubernetesTaskManagerParameters(taskExecutorProcessSpec);
-        final KubernetesPod taskManagerPod =
+        final KubernetesTaskManagerSpecification taskManagerSpec =
                 KubernetesTaskManagerFactory.buildTaskManagerKubernetesPod(
                         taskManagerPodTemplate, parameters);
-        final String podName = taskManagerPod.getName();
+        final String podName = taskManagerSpec.getPod().getName();
+
         final CompletableFuture<KubernetesWorkerNode> requestResourceFuture =
                 new CompletableFuture<>();
 
@@ -180,7 +182,7 @@ public class KubernetesResourceManagerDriver
                 parameters.getTaskManagerCPU());
 
         final CompletableFuture<Void> createPodFuture =
-                flinkKubeClient.createTaskManagerPod(taskManagerPod);
+                flinkKubeClient.createTaskManagerPod(taskManagerSpec);
 
         FutureUtils.assertNoException(
                 createPodFuture.handleAsync(
@@ -191,7 +193,7 @@ public class KubernetesResourceManagerDriver
                                         podName,
                                         exception);
                                 CompletableFuture<KubernetesWorkerNode> future =
-                                        requestResourceFutures.remove(taskManagerPod.getName());
+                                        requestResourceFutures.remove(taskManagerSpec.getPod().getName());
                                 if (future != null) {
                                     future.completeExceptionally(exception);
                                 }
@@ -306,7 +308,8 @@ public class KubernetesResourceManagerDriver
                 taskManagerParameters,
                 ExternalResourceUtils.getExternalResourceConfigurationKeys(
                         flinkConfig,
-                        KubernetesConfigOptions.EXTERNAL_RESOURCE_KUBERNETES_CONFIG_KEY_SUFFIX));
+                        KubernetesConfigOptions.EXTERNAL_RESOURCE_KUBERNETES_CONFIG_KEY_SUFFIX),
+                taskExecutorProcessSpec.getAssociatedJobs());
     }
 
     private void handlePodEventsInMainThread(List<KubernetesPod> pods) {

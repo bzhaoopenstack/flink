@@ -41,6 +41,7 @@ import java.util.function.Function;
  */
 public interface FlinkKubeClient extends AutoCloseable {
 
+    <C> C transformToExtendedClient(Class<C> type);
     /**
      * Create the Master components, this can include the Deployment, the ConfigMap(s), and the
      * Service(s).
@@ -55,7 +56,7 @@ public interface FlinkKubeClient extends AutoCloseable {
      * @param kubernetesPod taskmanager pod
      * @return Return the taskmanager pod creation future
      */
-    CompletableFuture<Void> createTaskManagerPod(KubernetesPod kubernetesPod);
+    CompletableFuture<Void> createTaskManagerPod(KubernetesTaskManagerSpecification taskManagerSpec);
 
     /**
      * Stop a specified pod by name.

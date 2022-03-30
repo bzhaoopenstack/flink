@@ -18,6 +18,7 @@
 
 package org.apache.flink.kubernetes.kubeclient.parameters;
 
+import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.common.resources.ExternalResource;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.TaskManagerOptions;
@@ -29,6 +30,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.apache.flink.util.Preconditions.checkArgument;
 import static org.apache.flink.util.Preconditions.checkNotNull;
@@ -55,8 +57,9 @@ public class KubernetesTaskManagerParameters extends AbstractKubernetesParameter
             String dynamicProperties,
             String jvmMemOptsEnv,
             ContaineredTaskManagerParameters containeredTaskManagerParameters,
-            Map<String, String> taskManagerExternalResourceConfigKeys) {
-        super(flinkConfig);
+            Map<String, String> taskManagerExternalResourceConfigKeys,
+            Set<JobID> associatedJobs) {
+        super(flinkConfig, associatedJobs);
         this.podName = checkNotNull(podName);
         this.dynamicProperties = checkNotNull(dynamicProperties);
         this.jvmMemOptsEnv = checkNotNull(jvmMemOptsEnv);
@@ -177,5 +180,23 @@ public class KubernetesTaskManagerParameters extends AbstractKubernetesParameter
 
     public ContaineredTaskManagerParameters getContaineredTaskManagerParameters() {
         return containeredTaskManagerParameters;
+    }
+
+    @Override
+    public Map<String, String> getCustomizedAnnotations() {
+        return flinkConfig
+                .getOptional(KubernetesConfigOptions.TASK_MANAGER_CUSTOMIZED_ANNOTATIONS)
+                .orElse(Collections.emptyMap());
+    }
+
+    @Override
+    public String getPodSchedulerName() {
+        return flinkConfig.get(KubernetesConfigOptions.TASK_MANAGER_POD_SCHEDULER_NAME);
+    }
+
+    public Map<String, String> getPodCustomizedConfig() {
+        return flinkConfig
+                .getOptional(KubernetesConfigOptions.TASK_MANAGER_POD_CUSTOMIZED_CONFIG)
+                .orElse(Collections.emptyMap());
     }
 }
