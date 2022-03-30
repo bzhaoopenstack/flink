@@ -83,7 +83,11 @@ public class Fabric8FlinkKubeClient implements FlinkKubeClient {
     private final int maxRetryAttempts;
     private final KubernetesConfigOptions.NodePortAddressType nodePortAddressType;
 
-    private final NamespacedKubernetesClient internalClient;
+    public <C> C transformToExtendedClient(Class<C> type){
+        return this.internalClient.adapt(type);
+    }
+
+    protected NamespacedKubernetesClient internalClient;
     private final ExecutorService kubeClientExecutorService;
     // save the master deployment atomic reference for setting owner reference of task manager pods
     private final AtomicReference<Deployment> masterDeploymentRef;
@@ -133,7 +137,7 @@ public class Fabric8FlinkKubeClient implements FlinkKubeClient {
     }
 
     @Override
-    public CompletableFuture<Void> createTaskManagerPod(KubernetesPod kubernetesPod) {
+    public CompletableFuture<Void> createTaskManagerPod(KubernetesTaskManagerSpecification taskManagerSpec) {
         return CompletableFuture.runAsync(
                 () -> {
                     if (masterDeploymentRef.get() == null) {
@@ -152,22 +156,22 @@ public class Fabric8FlinkKubeClient implements FlinkKubeClient {
                         }
                         masterDeploymentRef.compareAndSet(null, masterDeployment);
                     }
-
+                    setOwnerReference(masterDeploymentRef.get(), taskManagerSpec.getPreAccompanyingResources());
+                    this.internalClient.resourceList(taskManagerSpec.getPreAccompanyingResources()).createOrReplace();
                     // Note that we should use the uid of the master Deployment for the
                     // OwnerReference.
                     setOwnerReference(
                             checkNotNull(masterDeploymentRef.get()),
-                            Collections.singletonList(kubernetesPod.getInternalResource()));
+                            Collections.singletonList(taskManagerSpec.getPod().getInternalResource()));
 
                     LOG.debug(
                             "Start to create pod with spec {}{}",
                             System.lineSeparator(),
                             KubernetesUtils.tryToGetPrettyPrintYaml(
-                                    kubernetesPod.getInternalResource()));
+                                    taskManagerSpec.getPod().getInternalResource()));
 
-                    this.internalClient.pods().create(kubernetesPod.getInternalResource());
-                },
-                kubeClientExecutorService);
+                    this.internalClient.pods().create(taskManagerSpec.getPod().getInternalResource());
+                }, kubeClientExecutorService);
     }
 
     @Override

@@ -87,4 +87,9 @@ public abstract class AbstractKubernetesStepDecorator implements KubernetesStepD
     public List<HasMetadata> buildAccompanyingKubernetesResources() throws IOException {
         return Collections.emptyList();
     }
+
+    @Override
+    public List<HasMetadata> buildPreAccompanyingKubernetesResources() {
+        return Collections.emptyList();
+    }
 }

@@ -32,7 +32,7 @@ under the License.
 	<packaging>jar</packaging>
 
 	<properties>
-		<kubernetes.client.version>5.5.0</kubernetes.client.version>
+		<kubernetes.client.version>5.12.2</kubernetes.client.version>
 	</properties>
 
 	<dependencies>
@@ -64,6 +64,19 @@ under the License.
 			<artifactId>kubernetes-client</artifactId>
 			<version>${kubernetes.client.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>io.fabric8</groupId>
+			<artifactId>volcano-client</artifactId>
+			<version>${kubernetes.client.version}</version>
+		</dependency>
+                
+		<dependency>
+			<groupId>io.fabric8</groupId>
+			<artifactId>volcano-model-v1beta1</artifactId>
+			<version>${kubernetes.client.version}</version>
+		</dependency>
+
 
 		<!-- test dependencies -->
 		<dependency>
@@ -123,6 +136,8 @@ under the License.
 								<includes combine.children="append">
 									<include>io.fabric8:kubernetes-client</include>
 									<include>io.fabric8:kubernetes-model-*</include>
+									<include>io.fabric8:volcano-client</include>
+									<include>io.fabric8:volcano-model-*</include>
 									<include>io.fabric8:zjsonpatch</include>
 
 									<!-- Shade all the dependencies of kubernetes client  -->

@@ -21,6 +21,7 @@ package org.apache.flink.kubernetes.kubeclient.factory;
 import org.apache.flink.kubernetes.kubeclient.FlinkPod;
 import org.apache.flink.kubernetes.kubeclient.KubernetesJobManagerSpecification;
 import org.apache.flink.kubernetes.kubeclient.decorators.CmdJobManagerDecorator;
+import org.apache.flink.kubernetes.kubeclient.decorators.CustomizedConfDecorator;
 import org.apache.flink.kubernetes.kubeclient.decorators.EnvSecretsDecorator;
 import org.apache.flink.kubernetes.kubeclient.decorators.ExternalServiceDecorator;
 import org.apache.flink.kubernetes.kubeclient.decorators.FlinkConfMountDecorator;
@@ -64,6 +65,7 @@ public class KubernetesJobManagerFactory {
         final KubernetesStepDecorator[] stepDecorators =
                 new KubernetesStepDecorator[] {
                     new InitJobManagerDecorator(kubernetesJobManagerParameters),
+                    new CustomizedConfDecorator(kubernetesJobManagerParameters),
                     new EnvSecretsDecorator(kubernetesJobManagerParameters),
                     new MountSecretsDecorator(kubernetesJobManagerParameters),
                     new CmdJobManagerDecorator(kubernetesJobManagerParameters),

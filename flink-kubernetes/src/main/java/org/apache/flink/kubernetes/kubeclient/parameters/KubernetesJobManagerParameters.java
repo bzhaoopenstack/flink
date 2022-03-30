@@ -51,7 +51,7 @@ public class KubernetesJobManagerParameters extends AbstractKubernetesParameters
 
     public KubernetesJobManagerParameters(
             Configuration flinkConfig, ClusterSpecification clusterSpecification) {
-        super(flinkConfig);
+        super(flinkConfig, null);
         this.clusterSpecification = checkNotNull(clusterSpecification);
     }
 
@@ -199,5 +199,23 @@ public class KubernetesJobManagerParameters extends AbstractKubernetesParameters
                     "High availability should be enabled when starting standby JobManagers.");
         }
         return replicas;
+    }
+
+    @Override
+    public Map<String, String> getCustomizedAnnotations() {
+        return flinkConfig
+                .getOptional(KubernetesConfigOptions.JOB_MANAGER_CUSTOMIZED_ANNOTATIONS)
+                .orElse(Collections.emptyMap());
+    }
+
+    @Override
+    public String getPodSchedulerName() {
+        return flinkConfig.get(KubernetesConfigOptions.JOB_MANAGER_POD_SCHEDULER_NAME);
+    }
+
+    public Map<String, String> getPodCustomizedConfig() {
+        return flinkConfig
+                .getOptional(KubernetesConfigOptions.JOB_MANAGER_POD_CUSTOMIZED_CONFIG)
+                .orElse(Collections.emptyMap());
     }
 }
