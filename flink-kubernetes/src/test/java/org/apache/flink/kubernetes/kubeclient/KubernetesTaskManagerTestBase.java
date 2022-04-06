@@ -87,6 +87,7 @@ public class KubernetesTaskManagerTestBase extends KubernetesPodTestBase {
                         ExternalResourceUtils.getExternalResourceConfigurationKeys(
                                 flinkConfig,
                                 KubernetesConfigOptions
-                                        .EXTERNAL_RESOURCE_KUBERNETES_CONFIG_KEY_SUFFIX));
+                                        .EXTERNAL_RESOURCE_KUBERNETES_CONFIG_KEY_SUFFIX),
+                        null);
     }
 }

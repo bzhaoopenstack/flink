@@ -161,7 +161,7 @@ public class AbstractKubernetesParametersTest {
     public static class TestingKubernetesParameters extends AbstractKubernetesParameters {
 
         public TestingKubernetesParameters(Configuration flinkConfig) {
-            super(flinkConfig);
+            super(flinkConfig, null);
         }
 
         @Override

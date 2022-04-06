@@ -65,6 +65,7 @@ class KubernetesTaskManagerFactoryTest extends KubernetesTaskManagerTestBase {
         this.resultPod =
                 KubernetesTaskManagerFactory.buildTaskManagerKubernetesPod(
                                 new FlinkPod.Builder().build(), kubernetesTaskManagerParameters)
+                        .getPod()
                         .getInternalResource();
     }
 
