@@ -67,7 +67,7 @@ public class TestingResourceActions implements ResourceActions {
     }
 
     @Override
-    public boolean allocateResource(WorkerResourceSpec workerResourceSpec) {
+    public boolean allocateResource(JobID jobId, WorkerResourceSpec workerResourceSpec) {
         return allocateResourceFunction.apply(workerResourceSpec);
     }
 

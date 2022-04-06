@@ -71,7 +71,8 @@ public class TaskExecutorProcessUtilsTest
                     MemorySize.parse("8m"),
                     Arrays.asList(
                             new ExternalResource(EXTERNAL_RESOURCE_NAME_1, 1),
-                            new ExternalResource(EXTERNAL_RESOURCE_NAME_2, 2)));
+                            new ExternalResource(EXTERNAL_RESOURCE_NAME_2, 2)),
+                    null);
 
     public TaskExecutorProcessUtilsTest() {
         super(

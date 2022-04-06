@@ -79,7 +79,7 @@ public class TaskExecutorManagerTest extends TestLogger {
                         .createTaskExecutorManager()) {
 
             // create pending slot
-            taskExecutorManager.allocateWorker(requestedSlotProfile);
+            taskExecutorManager.allocateWorker(new JobID(), requestedSlotProfile);
             assertThat(taskExecutorManager.getNumberPendingTaskManagerSlots(), is(1));
 
             createAndRegisterTaskExecutor(taskExecutorManager, 1, offeredSlotProfile);
@@ -110,7 +110,7 @@ public class TaskExecutorManagerTest extends TestLogger {
                         .createTaskExecutorManager()) {
 
             // create pending slot
-            taskExecutorManager.allocateWorker(requestedSlotProfile);
+            taskExecutorManager.allocateWorker(new JobID(), requestedSlotProfile);
             assertThat(taskExecutorManager.getNumberPendingTaskManagerSlots(), is(1));
 
             final TaskExecutorConnection taskExecutorConnection = createTaskExecutorConnection();
@@ -213,7 +213,7 @@ public class TaskExecutorManagerTest extends TestLogger {
 
             CompletableFuture.supplyAsync(
                             () -> {
-                                taskExecutorManager.allocateWorker(resourceProfile);
+                                taskExecutorManager.allocateWorker(new JobID(), resourceProfile);
                                 InstanceID taskExecutorId =
                                         createAndRegisterTaskExecutor(
                                                 taskExecutorManager, 1, resourceProfile);
@@ -266,7 +266,7 @@ public class TaskExecutorManagerTest extends TestLogger {
                         .createTaskExecutorManager()) {
 
             assertThat(
-                    taskExecutorManager.allocateWorker(requestedProfile).orElse(null), nullValue());
+                    taskExecutorManager.allocateWorker(new JobID(), requestedProfile).orElse(null), nullValue());
             assertThat(resourceRequests.get(), is(0));
         }
     }
@@ -299,10 +299,10 @@ public class TaskExecutorManagerTest extends TestLogger {
 
             assertThat(resourceRequests.get(), is(0));
 
-            taskExecutorManager.allocateWorker(ResourceProfile.UNKNOWN);
+            taskExecutorManager.allocateWorker(new JobID(), ResourceProfile.UNKNOWN);
             assertThat(resourceRequests.get(), is(1));
 
-            taskExecutorManager.allocateWorker(ResourceProfile.UNKNOWN);
+            taskExecutorManager.allocateWorker(new JobID(), ResourceProfile.UNKNOWN);
             assertThat(resourceRequests.get(), is(1));
         }
     }
