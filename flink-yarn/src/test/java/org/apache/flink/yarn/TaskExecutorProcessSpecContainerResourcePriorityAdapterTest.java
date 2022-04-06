@@ -63,7 +63,8 @@ public class TaskExecutorProcessSpecContainerResourcePriorityAdapterTest extends
                     MemorySize.ofMebiBytes(100),
                     MemorySize.ofMebiBytes(100),
                     MemorySize.ofMebiBytes(100),
-                    Collections.emptyList());
+                    Collections.emptyList(),
+                    null);
 
     private static final TaskExecutorProcessSpec TASK_EXECUTOR_PROCESS_SPEC_2 =
             new TaskExecutorProcessSpec(
@@ -76,7 +77,8 @@ public class TaskExecutorProcessSpecContainerResourcePriorityAdapterTest extends
                     MemorySize.ofMebiBytes(200),
                     MemorySize.ofMebiBytes(200),
                     MemorySize.ofMebiBytes(200),
-                    Collections.emptyList());
+                    Collections.emptyList(),
+                    null);
 
     private static final TaskExecutorProcessSpec TASK_EXECUTOR_PROCESS_SPEC_WITH_EXTERNAL_RESOURCE =
             new TaskExecutorProcessSpec(
@@ -92,7 +94,8 @@ public class TaskExecutorProcessSpecContainerResourcePriorityAdapterTest extends
                     Collections.singleton(
                             new ExternalResource(
                                     SUPPORTED_EXTERNAL_RESOURCE_NAME,
-                                    SUPPORTED_EXTERNAL_RESOURCE_MAX)));
+                                    SUPPORTED_EXTERNAL_RESOURCE_MAX)),
+                    null);
 
     private static final TaskExecutorProcessSpec
             TASK_EXECUTOR_PROCESS_SPEC_WITH_EXTERNAL_RESOURCE_EXCEED_MAX =
@@ -109,7 +112,8 @@ public class TaskExecutorProcessSpecContainerResourcePriorityAdapterTest extends
                             Collections.singleton(
                                     new ExternalResource(
                                             SUPPORTED_EXTERNAL_RESOURCE_NAME,
-                                            SUPPORTED_EXTERNAL_RESOURCE_MAX + 1)));
+                                            SUPPORTED_EXTERNAL_RESOURCE_MAX + 1)),
+                            null);
 
     private static final TaskExecutorProcessSpec
             TASK_EXECUTOR_PROCESS_SPEC_WITH_UNSUPPORTED_EXTERNAL_RESOURCE =
@@ -124,7 +128,8 @@ public class TaskExecutorProcessSpecContainerResourcePriorityAdapterTest extends
                             MemorySize.ofMebiBytes(100),
                             MemorySize.ofMebiBytes(100),
                             Collections.singleton(
-                                    new ExternalResource(UNSUPPORTED_EXTERNAL_RESOURCE_NAME, 1)));
+                                    new ExternalResource(UNSUPPORTED_EXTERNAL_RESOURCE_NAME, 1)),
+                            null);
 
     private static final TaskExecutorProcessSpec TASK_EXECUTOR_PROCESS_SPEC_EXCEED_MAX =
             new TaskExecutorProcessSpec(
@@ -137,7 +142,8 @@ public class TaskExecutorProcessSpecContainerResourcePriorityAdapterTest extends
                     MemorySize.ofMebiBytes(102400),
                     MemorySize.ofMebiBytes(102400),
                     MemorySize.ofMebiBytes(102400),
-                    Collections.emptyList());
+                    Collections.emptyList(),
+                    null);
 
     @Test
     public void testGetResourceFromSpec() {
