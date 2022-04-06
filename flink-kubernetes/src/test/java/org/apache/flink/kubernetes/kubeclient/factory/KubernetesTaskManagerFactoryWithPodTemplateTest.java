@@ -35,6 +35,7 @@ public class KubernetesTaskManagerFactoryWithPodTemplateTest
                         podTemplate,
                         KubernetesTestUtils.createTaskManagerParameters(
                                 flinkConfig, "taskmanager-" + UUID.randomUUID().toString()))
+                .getPod()
                 .getInternalResource();
     }
 }

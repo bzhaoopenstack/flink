@@ -53,6 +53,8 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -224,7 +226,8 @@ public class Fabric8FlinkKubeClientTest extends KubernetesClientTestBase {
         this.flinkKubeClient.createJobManagerComponent(this.kubernetesJobManagerSpecification);
 
         final KubernetesPod kubernetesPod = buildKubernetesPod("mock-task-manager-pod");
-        this.flinkKubeClient.createTaskManagerPod(kubernetesPod).get();
+        this.flinkKubeClient.createTaskManagerPod(new KubernetesTaskManagerSpecification(kubernetesPod,
+                Collections.emptyList())).get();
 
         final Pod resultTaskManagerPod =
                 this.kubeClient.pods().inNamespace(NAMESPACE).withName(TASKMANAGER_POD_NAME).get();
@@ -245,11 +248,11 @@ public class Fabric8FlinkKubeClientTest extends KubernetesClientTestBase {
     @Test
     public void testCreateTwoTaskManagerPods() throws Exception {
         flinkKubeClient.createJobManagerComponent(this.kubernetesJobManagerSpecification);
-        flinkKubeClient.createTaskManagerPod(buildKubernetesPod("mock-task-manager-pod1")).get();
+        flinkKubeClient.createTaskManagerPod(new KubernetesTaskManagerSpecification(buildKubernetesPod("mock-task-manager-pod1"), Collections.emptyList())).get();
         mockGetDeploymentWithError();
         try {
             flinkKubeClient
-                    .createTaskManagerPod(buildKubernetesPod("mock-task-manager-pod2"))
+                    .createTaskManagerPod(new KubernetesTaskManagerSpecification(buildKubernetesPod("mock-task-manager-pod2"), Collections.emptyList()))
                     .get();
         } catch (Exception e) {
             fail("should only get the master deployment once");
@@ -391,7 +394,7 @@ public class Fabric8FlinkKubeClientTest extends KubernetesClientTestBase {
         this.flinkKubeClient.createJobManagerComponent(this.kubernetesJobManagerSpecification);
 
         final KubernetesPod kubernetesPod = buildKubernetesPod(TASKMANAGER_POD_NAME);
-        this.flinkKubeClient.createTaskManagerPod(kubernetesPod).get();
+        this.flinkKubeClient.createTaskManagerPod(new KubernetesTaskManagerSpecification(kubernetesPod, Collections.emptyList())).get();
 
         assertEquals(
                 1,

@@ -118,13 +118,18 @@ public class TestingFlinkKubeClient implements FlinkKubeClient {
     }
 
     @Override
+    public <C> C transformToExtendedClient(Class<C> type) {
+        return null;
+    }
+
+    @Override
     public void createJobManagerComponent(KubernetesJobManagerSpecification kubernetesJMSpec) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public CompletableFuture<Void> createTaskManagerPod(KubernetesPod kubernetesPod) {
-        return createTaskManagerPodFunction.apply(kubernetesPod);
+    public CompletableFuture<Void> createTaskManagerPod(KubernetesTaskManagerSpecification taskManagerSpec) {
+        return createTaskManagerPodFunction.apply(taskManagerSpec.getPod());
     }
 
     @Override
