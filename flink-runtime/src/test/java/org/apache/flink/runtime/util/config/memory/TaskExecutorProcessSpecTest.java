@@ -49,7 +49,8 @@ public class TaskExecutorProcessSpecTest extends TestLogger {
                         MemorySize.parse("6m"),
                         MemorySize.parse("7m"),
                         MemorySize.parse("8m"),
-                        Collections.singleton(new ExternalResource(EXTERNAL_RESOURCE_NAME, 1)));
+                        Collections.singleton(new ExternalResource(EXTERNAL_RESOURCE_NAME, 1)),
+                        null);
 
         TaskExecutorProcessSpec spec2 =
                 new TaskExecutorProcessSpec(
@@ -62,7 +63,8 @@ public class TaskExecutorProcessSpecTest extends TestLogger {
                         MemorySize.parse("6m"),
                         MemorySize.parse("7m"),
                         MemorySize.parse("8m"),
-                        Collections.singleton(new ExternalResource(EXTERNAL_RESOURCE_NAME, 1)));
+                        Collections.singleton(new ExternalResource(EXTERNAL_RESOURCE_NAME, 1)),
+                        null);
 
         assertThat(spec1, is(spec2));
     }
@@ -80,7 +82,8 @@ public class TaskExecutorProcessSpecTest extends TestLogger {
                         MemorySize.parse("6m"),
                         MemorySize.parse("7m"),
                         MemorySize.parse("8m"),
-                        Collections.singleton(new ExternalResource(EXTERNAL_RESOURCE_NAME, 1)));
+                        Collections.singleton(new ExternalResource(EXTERNAL_RESOURCE_NAME, 1)),
+                        null);
 
         TaskExecutorProcessSpec spec2 =
                 new TaskExecutorProcessSpec(
@@ -93,7 +96,8 @@ public class TaskExecutorProcessSpecTest extends TestLogger {
                         MemorySize.ZERO,
                         MemorySize.ZERO,
                         MemorySize.ZERO,
-                        Collections.emptyList());
+                        Collections.emptyList(),
+                        null);
 
         assertThat(spec1, not(spec2));
     }
