@@ -1250,7 +1250,12 @@ public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable>
         public boolean allocateResource(JobID jobId, WorkerResourceSpec workerResourceSpec) {
             validateRunsInMainThread();
             if (workerResourceSpec.getNumSlots() >= 1) {
-                workerResourceSpec.addAssociatedJob(jobId);
+                if (workerResourceSpec.getAssociatedJobs().isEmpty()) {
+                    workerResourceSpec.addAssociatedJob(jobId);
+                } else {
+                    workerResourceSpec.cleanAllAssociatedJobs();
+                    workerResourceSpec.addAssociatedJob(jobId);
+                }
             }
             return startNewWorker(workerResourceSpec);
         }

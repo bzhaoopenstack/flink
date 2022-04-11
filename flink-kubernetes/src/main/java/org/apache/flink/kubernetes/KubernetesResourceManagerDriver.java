@@ -18,6 +18,9 @@
 
 package org.apache.flink.kubernetes;
 
+import io.fabric8.volcano.client.VolcanoClient;
+
+import org.apache.flink.api.common.JobID;
 import org.apache.flink.configuration.BlobServerOptions;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.GlobalConfiguration;
@@ -28,6 +31,8 @@ import org.apache.flink.kubernetes.configuration.KubernetesResourceManagerDriver
 import org.apache.flink.kubernetes.kubeclient.FlinkKubeClient;
 import org.apache.flink.kubernetes.kubeclient.FlinkPod;
 import org.apache.flink.kubernetes.kubeclient.KubernetesTaskManagerSpecification;
+import org.apache.flink.kubernetes.kubeclient.decorators.schedulers.KubernetesCustomizedScheduler;
+import org.apache.flink.kubernetes.kubeclient.decorators.schedulers.customizedclient.FlinkVolcanoClient;
 import org.apache.flink.kubernetes.kubeclient.factory.KubernetesTaskManagerFactory;
 import org.apache.flink.kubernetes.kubeclient.parameters.KubernetesTaskManagerParameters;
 import org.apache.flink.kubernetes.kubeclient.resources.KubernetesPod;
@@ -214,6 +219,41 @@ public class KubernetesResourceManagerDriver
         log.info("Stopping TaskManager pod {}.", podName);
 
         stopPod(podName);
+    }
+
+    @Override
+    public void refreshAssociatedJobResources(JobID jobId) {
+        log.warn(
+                "[TEST] Start to refresh Job resources for JobID {}.",
+                jobId.toString());
+        // Check whether the K8S Customize Scheduler is enabled
+        List<KubernetesPod> podList =
+                flinkKubeClient.getPodsWithLabels(
+                        KubernetesUtils.getTaskManagerSelectors(clusterId));
+
+        Boolean isEnabled = Boolean.FALSE;
+        String customerizedSchedulerName = null;
+
+        for (KubernetesPod pod : podList) {
+            String schedulerName = pod.getInternalResource().getSpec().getSchedulerName();
+            if (!schedulerName.equals("default-scheduler")) {
+                isEnabled = Boolean.TRUE;
+                customerizedSchedulerName = schedulerName;
+                break;
+            }
+        }
+
+        // ext enabled, get customerized scheduler
+        if (isEnabled) {
+            if (KubernetesCustomizedScheduler.isSupportCustomizedScheduler(customerizedSchedulerName)) {
+                // TODO: NEED make it more common
+                VolcanoClient volcanoClient = FlinkVolcanoClient.getVolcanoClient(this.flinkConfig);
+                log.warn("[TEST] Get volcano client in refresh.");
+                // TODO: muiltiple threads support
+                volcanoClient.podGroups().withName("pod-group-"+jobId.toString()).delete();
+                log.warn("[TEST] End for clean podgroup {}", "pod-group-"+jobId.toString());
+            }
+        }
     }
 
     // ------------------------------------------------------------------------

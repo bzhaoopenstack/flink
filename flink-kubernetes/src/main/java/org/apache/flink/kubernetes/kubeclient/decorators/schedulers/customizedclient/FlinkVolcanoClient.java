@@ -4,6 +4,7 @@ import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
 
 import io.fabric8.volcano.client.VolcanoClient;
 
+import org.apache.flink.api.common.JobID;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.kubernetes.kubeclient.Fabric8FlinkKubeClient;
 import org.apache.flink.kubernetes.kubeclient.FlinkKubeClient;
@@ -28,5 +29,10 @@ public class FlinkVolcanoClient extends Fabric8FlinkKubeClient implements Custom
         FlinkKubeClient kubeClient = FlinkKubeClientFactory
                 .getInstance().fromConfiguration(flinkConfig, "client");
         return kubeClient.transformToExtendedClient(VolcanoClient.class);
+    }
+
+    @Override
+    public void refreshJobAssociatedResources(JobID jobId) {
+
     }
 }

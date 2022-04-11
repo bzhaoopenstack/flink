@@ -18,6 +18,7 @@
 
 package org.apache.flink.runtime.resourcemanager.active;
 
+import org.apache.flink.api.common.JobID;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.runtime.clusterframework.types.ResourceIDRetrievable;
 import org.apache.flink.util.Preconditions;
@@ -80,7 +81,9 @@ public abstract class AbstractResourceManagerDriver<WorkerType extends ResourceI
 
         initializeInternal();
     }
-
+    @Override
+    public void refreshAssociatedJobResources(JobID jobId) {
+    }
     /** Initialize the deployment specific components. */
     protected abstract void initializeInternal() throws Exception;
 }

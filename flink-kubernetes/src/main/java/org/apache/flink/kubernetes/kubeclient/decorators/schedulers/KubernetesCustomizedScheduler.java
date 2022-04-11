@@ -33,16 +33,9 @@ public class KubernetesCustomizedScheduler implements CustomizedScheduler {
             Class<?> tarClass = Class.forName(targetClassPath);
             Class[] params = {AbstractKubernetesParameters.class, Configuration.class};
             tarObj = tarClass.getDeclaredConstructor(params).newInstance(this.kubernetesComponentConf, this.flinkConfig);
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            return null;
         }
         return (KubernetesCustomizedScheduler) tarObj;
     }
@@ -68,4 +61,17 @@ public class KubernetesCustomizedScheduler implements CustomizedScheduler {
         return null;
     }
 
+    public static Boolean isSupportCustomizedScheduler(String name) {
+
+        String tarClassName =
+                name.substring(0, 1).toUpperCase() + name.substring(1, name.length()).toLowerCase();
+        String curPkgPath = KubernetesCustomizedScheduler.class.getPackage().getName();
+        String targetClassPath = curPkgPath + "." + tarClassName;
+        try {
+            Class.forName(targetClassPath);
+        } catch (ClassNotFoundException e) {
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
 }

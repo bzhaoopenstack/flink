@@ -66,7 +66,7 @@ public class Volcano extends KubernetesCustomizedScheduler {
                 .getString(DeploymentOptions.TARGET)
                 .equals(KubernetesDeploymentTarget.SESSION
                         .getName())) {
-            if (kubernetesComponentConf.getAssociatedJobs() != null && kubernetesComponentConf.getAssociatedJobs().size() == 1) {
+            if (kubernetesComponentConf.getAssociatedJobs() != null && kubernetesComponentConf.getAssociatedJobs().size() >= 1) {
                 this.jobId = kubernetesComponentConf.getAssociatedJobs().toArray()[0];
             }
 

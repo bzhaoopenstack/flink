@@ -18,6 +18,7 @@
 
 package org.apache.flink.runtime.resourcemanager.active;
 
+import org.apache.flink.api.common.JobID;
 import org.apache.flink.runtime.clusterframework.ApplicationStatus;
 import org.apache.flink.runtime.clusterframework.TaskExecutorProcessSpec;
 import org.apache.flink.runtime.clusterframework.types.ResourceIDRetrievable;
@@ -94,4 +95,6 @@ public interface ResourceManagerDriver<WorkerType extends ResourceIDRetrievable>
      * @param worker Worker node to be released, in the deployment specific type.
      */
     void releaseResource(WorkerType worker);
+
+    void refreshAssociatedJobResources(JobID jobId);
 }

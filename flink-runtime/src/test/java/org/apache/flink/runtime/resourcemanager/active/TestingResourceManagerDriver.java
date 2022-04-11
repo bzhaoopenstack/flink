@@ -18,6 +18,7 @@
 
 package org.apache.flink.runtime.resourcemanager.active;
 
+import org.apache.flink.api.common.JobID;
 import org.apache.flink.runtime.clusterframework.ApplicationStatus;
 import org.apache.flink.runtime.clusterframework.TaskExecutorProcessSpec;
 import org.apache.flink.runtime.clusterframework.types.ResourceID;
@@ -94,6 +95,11 @@ public class TestingResourceManagerDriver implements ResourceManagerDriver<Resou
     @Override
     public void releaseResource(ResourceID worker) {
         releaseResourceConsumer.accept(worker);
+    }
+
+    @Override
+    public void refreshAssociatedJobResources(JobID jobId) {
+
     }
 
     public static class Builder {
