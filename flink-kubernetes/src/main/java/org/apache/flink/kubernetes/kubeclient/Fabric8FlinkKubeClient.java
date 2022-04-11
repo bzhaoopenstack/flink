@@ -157,6 +157,18 @@ public class Fabric8FlinkKubeClient implements FlinkKubeClient {
                         masterDeploymentRef.compareAndSet(null, masterDeployment);
                     }
                     setOwnerReference(masterDeploymentRef.get(), taskManagerSpec.getPreAccompanyingResources());
+                    if (!taskManagerSpec.getPreAccompanyingResources().isEmpty()) {
+                        LOG.warn(
+                                "[TEST] Create {} podgroup with name {}",
+                                taskManagerSpec.getPreAccompanyingResources().size(),
+                                taskManagerSpec
+                                        .getPreAccompanyingResources()
+                                        .get(0)
+                                        .getMetadata()
+                                        .getName());
+                    } else {
+                        LOG.warn("[TEST] Didn't get podgroup request");
+                    }
                     this.internalClient.resourceList(taskManagerSpec.getPreAccompanyingResources()).createOrReplace();
                     // Note that we should use the uid of the master Deployment for the
                     // OwnerReference.

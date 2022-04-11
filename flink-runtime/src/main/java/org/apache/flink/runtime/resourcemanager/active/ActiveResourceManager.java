@@ -19,6 +19,8 @@
 package org.apache.flink.runtime.resourcemanager.active;
 
 import org.apache.flink.annotation.VisibleForTesting;
+import org.apache.flink.api.common.JobID;
+import org.apache.flink.api.common.JobStatus;
 import org.apache.flink.api.common.time.Time;
 import org.apache.flink.configuration.AkkaOptions;
 import org.apache.flink.configuration.Configuration;
@@ -267,6 +269,14 @@ public class ActiveResourceManager<WorkerType extends ResourceIDRetrievable>
         onFatalError(exception);
     }
 
+    @Override
+    public void disconnectJobManager(JobID jobId, JobStatus jobStatus, Exception cause) {
+        super.disconnectJobManager(jobId, jobStatus, cause);
+        if (jobStatus.isGloballyTerminalState()) {
+            // refresh the downstream resource
+            this.resourceManagerDriver.refreshAssociatedJobResources(jobId);
+        }
+    }
     // ------------------------------------------------------------------------
     //  Internal
     // ------------------------------------------------------------------------

@@ -69,6 +69,9 @@ public final class WorkerResourceSpec implements Serializable {
 
     public void addAssociatedJob(JobID jobId) {this.associatedJobs.add(jobId);}
 
+    public void cleanAllAssociatedJobs() {
+        this.associatedJobs.clear();
+    }
 
     private WorkerResourceSpec(
             CPUResource cpuCores,
