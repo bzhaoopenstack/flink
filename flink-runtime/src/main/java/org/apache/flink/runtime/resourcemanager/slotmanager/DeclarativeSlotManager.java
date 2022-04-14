@@ -684,8 +684,8 @@ public class DeclarativeSlotManager implements SlotManager {
         return new MatchingResult(false, pendingSlots);
     }
 
-    private WorkerAllocationResult tryAllocateWorkerAndReserveSlot(JobID jobId,
-            ResourceProfile profile, ResourceCounter pendingSlots) {
+    private WorkerAllocationResult tryAllocateWorkerAndReserveSlot(
+            JobID jobId, ResourceProfile profile, ResourceCounter pendingSlots) {
         Optional<ResourceRequirement> newlyFulfillableRequirements =
                 taskExecutorManager.allocateWorker(jobId, profile);
         if (newlyFulfillableRequirements.isPresent()) {

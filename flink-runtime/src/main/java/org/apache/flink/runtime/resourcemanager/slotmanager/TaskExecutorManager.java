@@ -252,8 +252,8 @@ class TaskExecutorManager implements AutoCloseable {
      * @return an upper bound resource requirement that can be fulfilled by the new worker, if one
      *     was allocated
      */
-    public Optional<ResourceRequirement> allocateWorker(JobID jobId,
-            ResourceProfile requestedSlotResourceProfile) {
+    public Optional<ResourceRequirement> allocateWorker(
+            JobID jobId, ResourceProfile requestedSlotResourceProfile) {
         final int numRegisteredSlots = getNumberRegisteredSlots();
         final int numPendingSlots = getNumberPendingTaskManagerSlots();
         if (isMaxSlotNumExceededAfterAdding(numSlotsPerWorker)) {

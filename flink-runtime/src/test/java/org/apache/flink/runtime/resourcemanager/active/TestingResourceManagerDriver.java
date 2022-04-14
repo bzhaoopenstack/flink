@@ -98,9 +98,7 @@ public class TestingResourceManagerDriver implements ResourceManagerDriver<Resou
     }
 
     @Override
-    public void refreshAssociatedJobResources(JobID jobId) {
-
-    }
+    public void refreshAssociatedJobResources(JobID jobId) {}
 
     public static class Builder {
         private TriFunctionWithException<

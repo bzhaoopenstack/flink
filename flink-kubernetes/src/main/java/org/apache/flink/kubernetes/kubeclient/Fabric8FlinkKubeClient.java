@@ -83,7 +83,7 @@ public class Fabric8FlinkKubeClient implements FlinkKubeClient {
     private final int maxRetryAttempts;
     private final KubernetesConfigOptions.NodePortAddressType nodePortAddressType;
 
-    public <C> C transformToExtendedClient(Class<C> type){
+    public <C> C transformToExtendedClient(Class<C> type) {
         return this.internalClient.adapt(type);
     }
 
@@ -137,7 +137,8 @@ public class Fabric8FlinkKubeClient implements FlinkKubeClient {
     }
 
     @Override
-    public CompletableFuture<Void> createTaskManagerPod(KubernetesTaskManagerSpecification taskManagerSpec) {
+    public CompletableFuture<Void> createTaskManagerPod(
+            KubernetesTaskManagerSpecification taskManagerSpec) {
         return CompletableFuture.runAsync(
                 () -> {
                     if (masterDeploymentRef.get() == null) {
@@ -156,7 +157,9 @@ public class Fabric8FlinkKubeClient implements FlinkKubeClient {
                         }
                         masterDeploymentRef.compareAndSet(null, masterDeployment);
                     }
-                    setOwnerReference(masterDeploymentRef.get(), taskManagerSpec.getPreAccompanyingResources());
+                    setOwnerReference(
+                            masterDeploymentRef.get(),
+                            taskManagerSpec.getPreAccompanyingResources());
                     if (!taskManagerSpec.getPreAccompanyingResources().isEmpty()) {
                         LOG.warn(
                                 "[TEST] Create {} podgroup with name {}",
@@ -169,12 +172,15 @@ public class Fabric8FlinkKubeClient implements FlinkKubeClient {
                     } else {
                         LOG.warn("[TEST] Didn't get podgroup request");
                     }
-                    this.internalClient.resourceList(taskManagerSpec.getPreAccompanyingResources()).createOrReplace();
+                    this.internalClient
+                            .resourceList(taskManagerSpec.getPreAccompanyingResources())
+                            .createOrReplace();
                     // Note that we should use the uid of the master Deployment for the
                     // OwnerReference.
                     setOwnerReference(
                             checkNotNull(masterDeploymentRef.get()),
-                            Collections.singletonList(taskManagerSpec.getPod().getInternalResource()));
+                            Collections.singletonList(
+                                    taskManagerSpec.getPod().getInternalResource()));
 
                     LOG.debug(
                             "Start to create pod with spec {}{}",
@@ -182,8 +188,11 @@ public class Fabric8FlinkKubeClient implements FlinkKubeClient {
                             KubernetesUtils.tryToGetPrettyPrintYaml(
                                     taskManagerSpec.getPod().getInternalResource()));
 
-                    this.internalClient.pods().create(taskManagerSpec.getPod().getInternalResource());
-                }, kubeClientExecutorService);
+                    this.internalClient
+                            .pods()
+                            .create(taskManagerSpec.getPod().getInternalResource());
+                },
+                kubeClientExecutorService);
     }
 
     @Override
