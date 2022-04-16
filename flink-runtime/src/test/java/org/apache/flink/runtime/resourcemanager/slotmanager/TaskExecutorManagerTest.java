@@ -266,7 +266,8 @@ public class TaskExecutorManagerTest extends TestLogger {
                         .createTaskExecutorManager()) {
 
             assertThat(
-                    taskExecutorManager.allocateWorker(new JobID(), requestedProfile).orElse(null), nullValue());
+                    taskExecutorManager.allocateWorker(new JobID(), requestedProfile).orElse(null),
+                    nullValue());
             assertThat(resourceRequests.get(), is(0));
         }
     }

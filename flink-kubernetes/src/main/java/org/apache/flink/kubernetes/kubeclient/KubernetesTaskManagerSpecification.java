@@ -18,31 +18,35 @@
 
 package org.apache.flink.kubernetes.kubeclient;
 
-import io.fabric8.kubernetes.api.model.HasMetadata;
-import io.fabric8.kubernetes.api.model.apps.Deployment;
-
 import org.apache.flink.kubernetes.kubeclient.resources.KubernetesPod;
+import org.apache.flink.util.Preconditions;
 
+import io.fabric8.kubernetes.api.model.HasMetadata;
+
+import java.util.Collections;
 import java.util.List;
 
 /** Composition of the created Kubernetes components that represents a Flink application. */
 public class KubernetesTaskManagerSpecification {
 
+    private final KubernetesPod pod;
+
+    private final List<HasMetadata> preAccompanyingResources;
+
+    public KubernetesTaskManagerSpecification(
+            KubernetesPod pod, List<HasMetadata> preAccompanyingResources) {
+        this.pod = Preconditions.checkNotNull(pod);
+        this.preAccompanyingResources =
+                preAccompanyingResources != null
+                        ? preAccompanyingResources
+                        : Collections.emptyList();
+    }
+
     public KubernetesPod getPod() {
         return pod;
     }
 
-    private KubernetesPod pod;
-
     public List<HasMetadata> getPreAccompanyingResources() {
         return preAccompanyingResources;
-    }
-
-    private List<HasMetadata> preAccompanyingResources;
-
-    public KubernetesTaskManagerSpecification(
-            KubernetesPod pod, List<HasMetadata> preAccompanyingResources) {
-        this.pod = pod;
-        this.preAccompanyingResources = preAccompanyingResources;
     }
 }

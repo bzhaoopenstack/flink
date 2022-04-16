@@ -36,12 +36,13 @@ import java.util.function.Function;
 /**
  * The client to talk with kubernetes. The interfaces will be called both in Client and
  * ResourceManager. To avoid potentially blocking the execution of RpcEndpoint's main thread, these
- * interfaces {@link #createTaskManagerPod(KubernetesPod)}, {@link #stopPod(String)} should be
- * implemented asynchronously.
+ * interfaces {@link #createTaskManagerPod(KubernetesTaskManagerSpecification)}, {@link
+ * #stopPod(String)} should be implemented asynchronously.
  */
 public interface FlinkKubeClient extends AutoCloseable {
 
     <C> C transformToExtendedClient(Class<C> type);
+
     /**
      * Create the Master components, this can include the Deployment, the ConfigMap(s), and the
      * Service(s).
@@ -53,10 +54,11 @@ public interface FlinkKubeClient extends AutoCloseable {
     /**
      * Create task manager pod.
      *
-     * @param kubernetesPod taskmanager pod
+     * @param taskManagerSpec the taskmanager pod spec
      * @return Return the taskmanager pod creation future
      */
-    CompletableFuture<Void> createTaskManagerPod(KubernetesTaskManagerSpecification taskManagerSpec);
+    CompletableFuture<Void> createTaskManagerPod(
+            KubernetesTaskManagerSpecification taskManagerSpec);
 
     /**
      * Stop a specified pod by name.
