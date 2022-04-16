@@ -143,7 +143,6 @@ public class TaskExecutorProcessSpec extends CommonProcessMemorySpec<TaskExecuto
             Set<JobID> associatedJobs) {
         this(cpuCores, flinkMemory, jvmMetaspaceAndOverhead, numSlots, extendedResources);
         this.associatedJobs = associatedJobs;
-
     }
 
     protected TaskExecutorProcessSpec(

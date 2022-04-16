@@ -18,8 +18,6 @@
 
 package org.apache.flink.kubernetes.kubeclient.factory;
 
-import io.fabric8.kubernetes.api.model.HasMetadata;
-
 import org.apache.flink.kubernetes.kubeclient.FlinkPod;
 import org.apache.flink.kubernetes.kubeclient.KubernetesTaskManagerSpecification;
 import org.apache.flink.kubernetes.kubeclient.decorators.CmdTaskManagerDecorator;
@@ -35,6 +33,7 @@ import org.apache.flink.kubernetes.kubeclient.parameters.KubernetesTaskManagerPa
 import org.apache.flink.kubernetes.kubeclient.resources.KubernetesPod;
 import org.apache.flink.util.Preconditions;
 
+import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodBuilder;
 
@@ -51,19 +50,20 @@ public class KubernetesTaskManagerFactory {
 
         final KubernetesStepDecorator[] stepDecorators =
                 new KubernetesStepDecorator[] {
-                        new InitTaskManagerDecorator(kubernetesTaskManagerParameters),
-                        new CustomizedConfDecorator(kubernetesTaskManagerParameters),
-                        new EnvSecretsDecorator(kubernetesTaskManagerParameters),
-                        new MountSecretsDecorator(kubernetesTaskManagerParameters),
-                        new CmdTaskManagerDecorator(kubernetesTaskManagerParameters),
-                        new HadoopConfMountDecorator(kubernetesTaskManagerParameters),
-                        new KerberosMountDecorator(kubernetesTaskManagerParameters),
-                        new FlinkConfMountDecorator(kubernetesTaskManagerParameters)
+                    new InitTaskManagerDecorator(kubernetesTaskManagerParameters),
+                    new CustomizedConfDecorator(kubernetesTaskManagerParameters),
+                    new EnvSecretsDecorator(kubernetesTaskManagerParameters),
+                    new MountSecretsDecorator(kubernetesTaskManagerParameters),
+                    new CmdTaskManagerDecorator(kubernetesTaskManagerParameters),
+                    new HadoopConfMountDecorator(kubernetesTaskManagerParameters),
+                    new KerberosMountDecorator(kubernetesTaskManagerParameters),
+                    new FlinkConfMountDecorator(kubernetesTaskManagerParameters)
                 };
 
         for (KubernetesStepDecorator stepDecorator : stepDecorators) {
             flinkPod = stepDecorator.decorateFlinkPod(flinkPod);
-            preAccompanyingResources.addAll(stepDecorator.buildPreAccompanyingKubernetesResources());
+            preAccompanyingResources.addAll(
+                    stepDecorator.buildPreAccompanyingKubernetesResources());
         }
 
         final Pod resolvedPod =
@@ -73,6 +73,7 @@ public class KubernetesTaskManagerFactory {
                         .endSpec()
                         .build();
 
-        return new KubernetesTaskManagerSpecification(new KubernetesPod(resolvedPod), preAccompanyingResources);
+        return new KubernetesTaskManagerSpecification(
+                new KubernetesPod(resolvedPod), preAccompanyingResources);
     }
 }

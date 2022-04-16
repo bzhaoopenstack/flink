@@ -81,9 +81,9 @@ public abstract class AbstractResourceManagerDriver<WorkerType extends ResourceI
 
         initializeInternal();
     }
+
     @Override
-    public void refreshAssociatedJobResources(JobID jobId) {
-    }
+    public void refreshAssociatedJobResources(JobID jobId) {}
     /** Initialize the deployment specific components. */
     protected abstract void initializeInternal() throws Exception;
 }
