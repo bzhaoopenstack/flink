@@ -18,6 +18,8 @@
 
 package org.apache.flink.kubernetes.kubeclient;
 
+import io.fabric8.kubernetes.api.model.HasMetadata;
+
 import org.apache.flink.kubernetes.configuration.KubernetesLeaderElectionConfiguration;
 import org.apache.flink.kubernetes.kubeclient.KubernetesSharedWatcher.Watch;
 import org.apache.flink.kubernetes.kubeclient.resources.KubernetesConfigMap;
@@ -118,7 +120,9 @@ public class TestingFlinkKubeClient implements FlinkKubeClient {
     }
 
     @Override
-    public <C> C transformToExtendedClient(Class<C> type) {
+    public <T extends HasMetadata> CompletableFuture<Void> deleteKubernetesResource(
+            Class<T> resourceType,
+            String resourceName) {
         return null;
     }
 

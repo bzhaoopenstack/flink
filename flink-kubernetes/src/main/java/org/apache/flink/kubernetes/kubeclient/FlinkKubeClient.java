@@ -18,6 +18,8 @@
 
 package org.apache.flink.kubernetes.kubeclient;
 
+import io.fabric8.kubernetes.api.model.HasMetadata;
+
 import org.apache.flink.kubernetes.configuration.KubernetesLeaderElectionConfiguration;
 import org.apache.flink.kubernetes.kubeclient.resources.KubernetesConfigMap;
 import org.apache.flink.kubernetes.kubeclient.resources.KubernetesLeaderElector;
@@ -41,7 +43,8 @@ import java.util.function.Function;
  */
 public interface FlinkKubeClient extends AutoCloseable {
 
-    <C> C transformToExtendedClient(Class<C> type);
+    <T extends HasMetadata> CompletableFuture<Void> deleteKubernetesResource(
+            Class<T> resourceType, String resourceName);
 
     /**
      * Create the Master components, this can include the Deployment, the ConfigMap(s), and the

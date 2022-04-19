@@ -27,10 +27,10 @@ import org.apache.flink.configuration.TaskManagerOptions;
 import org.apache.flink.kubernetes.configuration.KubernetesConfigOptions;
 import org.apache.flink.kubernetes.configuration.KubernetesResourceManagerDriverConfiguration;
 import org.apache.flink.kubernetes.kubeclient.FlinkKubeClient;
+import org.apache.flink.kubernetes.kubeclient.FlinkKubeClientFactory;
 import org.apache.flink.kubernetes.kubeclient.FlinkPod;
 import org.apache.flink.kubernetes.kubeclient.KubernetesTaskManagerSpecification;
 import org.apache.flink.kubernetes.kubeclient.decorators.schedulers.KubernetesCustomizedScheduler;
-import org.apache.flink.kubernetes.kubeclient.decorators.schedulers.customizedclient.FlinkVolcanoClient;
 import org.apache.flink.kubernetes.kubeclient.factory.KubernetesTaskManagerFactory;
 import org.apache.flink.kubernetes.kubeclient.parameters.KubernetesTaskManagerParameters;
 import org.apache.flink.kubernetes.kubeclient.resources.KubernetesPod;
@@ -56,17 +56,18 @@ import org.apache.flink.util.FlinkException;
 import org.apache.flink.util.Preconditions;
 import org.apache.flink.util.concurrent.FutureUtils;
 
-import io.fabric8.volcano.client.VolcanoClient;
 
 import javax.annotation.Nullable;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /** Implementation of {@link ResourceManagerDriver} for Kubernetes deployment. */
 public class KubernetesResourceManagerDriver
@@ -244,12 +245,28 @@ public class KubernetesResourceManagerDriver
         if (customSchedulerName != null) {
             if (KubernetesCustomizedScheduler.isSupportCustomizedScheduler(customSchedulerName)) {
                 // TODO: NEED make it more common
-                VolcanoClient volcanoClient = FlinkVolcanoClient.getVolcanoClient(this.flinkConfig);
-                log.warn("[TEST] Get volcano client in refresh.");
-                // TODO: muiltiple threads support
-                final String podGroupName = "pod-group-" + jobId;
-                volcanoClient.podGroups().withName(podGroupName).delete();
-                log.warn("[TEST] End for clean podgroup {}", podGroupName);
+                FlinkKubeClient client = FlinkKubeClientFactory
+                        .getInstance()
+                        .fromConfiguration(this.flinkConfig, "client");
+
+                Map<String, Class> resourceMap = null;
+                try {
+                    resourceMap = KubernetesCustomizedScheduler.getResourceClassMap(customSchedulerName);
+                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                    resourceMap = null;
+                }
+                if (resourceMap != null) {
+                    Class resourceCls = resourceMap.get("podgroup");
+                    log.warn("[TEST] Get volcano client in refresh.");
+                    // TODO: muiltiple threads support
+                    final String podGroupName = "pod-group-" + jobId;
+                    try {
+                        client.deleteKubernetesResource(resourceCls, podGroupName).get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                    log.warn("[TEST] End for clean podgroup {}", podGroupName);
+                }
             }
         }
     }

@@ -25,6 +25,8 @@ import org.apache.flink.util.Preconditions;
 
 import io.fabric8.kubernetes.api.model.HasMetadata;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -91,6 +93,20 @@ public class KubernetesCustomizedScheduler implements CustomizedScheduler {
             return Boolean.FALSE;
         }
         return Boolean.TRUE;
+    }
+
+    public static Map<String, Class> getResourceClassMap(String name) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        String targetClassPath = getSchedulerFullyQualifiedClassName(name);
+        Class<?> aClass;
+        try {
+            aClass = Class.forName(targetClassPath);
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+
+        Method getResourceClassMap = aClass.getMethod("getResourceClassMap");
+        return (Map<String, Class>) getResourceClassMap.invoke(aClass);
     }
 
     private static String getSchedulerFullyQualifiedClassName(String name) {

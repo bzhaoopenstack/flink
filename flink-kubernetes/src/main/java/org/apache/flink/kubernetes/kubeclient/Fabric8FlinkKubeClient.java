@@ -82,12 +82,7 @@ public class Fabric8FlinkKubeClient implements FlinkKubeClient {
     private final String namespace;
     private final int maxRetryAttempts;
     private final KubernetesConfigOptions.NodePortAddressType nodePortAddressType;
-
-    public <C> C transformToExtendedClient(Class<C> type) {
-        return this.internalClient.adapt(type);
-    }
-
-    protected NamespacedKubernetesClient internalClient;
+    private final NamespacedKubernetesClient internalClient;
     private final ExecutorService kubeClientExecutorService;
     // save the master deployment atomic reference for setting owner reference of task manager pods
     private final AtomicReference<Deployment> masterDeploymentRef;
@@ -387,6 +382,18 @@ public class Fabric8FlinkKubeClient implements FlinkKubeClient {
         // returned if the underlying resource doesn't exist
         return CompletableFuture.runAsync(
                 () -> this.internalClient.configMaps().withName(configMapName).delete(),
+                kubeClientExecutorService);
+    }
+
+    @Override
+    public <T extends HasMetadata> CompletableFuture<Void> deleteKubernetesResource(
+            Class<T> resourceType, String resourceName) {
+        return CompletableFuture.runAsync(
+                () -> this.internalClient
+                        .resources(resourceType)
+                        .inNamespace(this.namespace)
+                        .withName(resourceName)
+                        .delete(),
                 kubeClientExecutorService);
     }
 

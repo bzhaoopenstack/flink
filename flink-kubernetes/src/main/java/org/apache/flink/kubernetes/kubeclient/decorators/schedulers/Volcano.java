@@ -18,22 +18,19 @@
 
 package org.apache.flink.kubernetes.kubeclient.decorators.schedulers;
 
+import io.fabric8.volcano.scheduling.v1beta1.PodGroup;
+
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.DeploymentOptions;
 import org.apache.flink.kubernetes.configuration.KubernetesConfigOptions;
 import org.apache.flink.kubernetes.configuration.KubernetesDeploymentTarget;
 import org.apache.flink.kubernetes.kubeclient.FlinkPod;
-import org.apache.flink.kubernetes.kubeclient.decorators.schedulers.customizedclient.FlinkVolcanoClient;
-import org.apache.flink.kubernetes.kubeclient.decorators.schedulers.queue.FlinkQueue;
-import org.apache.flink.kubernetes.kubeclient.decorators.schedulers.queue.VolcanoQueueFactory;
 import org.apache.flink.kubernetes.kubeclient.parameters.AbstractKubernetesParameters;
 import org.apache.flink.kubernetes.utils.Constants;
 
 import io.fabric8.kubernetes.api.model.HasMetadata;
-import io.fabric8.kubernetes.api.model.KubernetesResource;
 import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.api.model.Quantity;
-import io.fabric8.volcano.client.VolcanoClient;
 import io.fabric8.volcano.scheduling.v1beta1.PodGroupBuilder;
 
 import java.util.Collections;
@@ -46,6 +43,13 @@ public class Volcano extends KubernetesCustomizedScheduler {
 
     private static final String QUEUE_PREFIX = "scheduling.volcano.sh/queue-name";
     private static final String PODGROUP_PREFIX = "scheduling.k8s.io/group-name";
+
+    public static Map<String, Class> getResourceClassMap() {
+        return resourceClassMap;
+    }
+
+    public static final Map<String, Class> resourceClassMap = Collections.singletonMap(
+            "podgroup", PodGroup.class);
 
     @Override
     public Object getJobId() {
@@ -65,13 +69,12 @@ public class Volcano extends KubernetesCustomizedScheduler {
     private String priorityClassKey = "priorityclass";
     private Map<String, String> annotations;
     private String jobPrefix = "pod-group-";
-    private final VolcanoClient volcanoClient;
+    private final String namespace;
 
     public Volcano(
             AbstractKubernetesParameters kubernetesComponentConf, Configuration flinkConfig) {
         super(kubernetesComponentConf, flinkConfig);
-        this.volcanoClient = FlinkVolcanoClient.getVolcanoClient(this.flinkConfig);
-
+        this.namespace = flinkConfig.getString(KubernetesConfigOptions.NAMESPACE);
         String deployment = this.flinkConfig.getString(DeploymentOptions.TARGET);
         // check whether the deployment is session mode.
         if (KubernetesDeploymentTarget.SESSION.getName().equals(deployment)) {
@@ -118,12 +121,6 @@ public class Volcano extends KubernetesCustomizedScheduler {
 
     @Override
     public HasMetadata prepareRequestResources() {
-        if (this.queue != null) {
-            VolcanoQueueFactory.getInstance().initVolcanoQueueFactory(this.flinkConfig);
-            FlinkQueue queue = VolcanoQueueFactory.getInstance().getQueueByNameOrId(this.queue);
-            KubernetesResource kubeResource = queue.getKubeResource();
-        }
-
         HashMap<String, Quantity> minResources = new HashMap<>();
         if (this.minCpuPerJob != null) {
             minResources.put(Constants.RESOURCE_NAME_CPU, new Quantity(this.minCpuPerJob));
@@ -135,17 +132,22 @@ public class Volcano extends KubernetesCustomizedScheduler {
         }
 
         if (this.jobId != null) {
-            String namespace = this.volcanoClient.getNamespace();
             PodGroupBuilder podGroupBuilder = new PodGroupBuilder();
             podGroupBuilder
                     .editOrNewMetadata()
                     .withName(this.jobPrefix + this.jobId.toString())
-                    .withNamespace(namespace)
+                    .withNamespace(this.namespace)
                     .endMetadata()
                     .editOrNewSpec()
                     .withMinResources(minResources)
                     .endSpec();
 
+            if (this.queue != null) {
+                podGroupBuilder
+                    .editOrNewSpec()
+                    .withQueue(this.queue)
+                    .endSpec();
+            }
             if (this.minMemberPerJob != null) {
                 podGroupBuilder
                         .editOrNewSpec()
