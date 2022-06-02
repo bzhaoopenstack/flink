@@ -471,6 +471,13 @@ public class KubernetesConfigOptions {
                                     + "For customrized kubernetes pod scheduler, allow to set pod scheduler "
                                     + "for customerized pod schduling.");
 
+    public static final ConfigOption<List<String>> KUBERNETES_POD_DECORATORS =
+            key("kubernetes.pod.decorators")
+                    .stringType()
+                    .asList()
+                    .noDefaultValue()
+                    .withDescription("Class names of a K8S customized decorator implementation.");
+
     /**
      * This option is here only for documentation generation, it is the fallback key of
      * JOB_MANAGER_POD_TEMPLATE and TASK_MANAGER_POD_TEMPLATE.

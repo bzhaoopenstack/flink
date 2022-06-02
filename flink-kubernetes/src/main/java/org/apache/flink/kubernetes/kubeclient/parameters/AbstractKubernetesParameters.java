@@ -18,6 +18,7 @@
 
 package org.apache.flink.kubernetes.kubeclient.parameters;
 
+import org.apache.flink.configuration.ConfigUtils;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.DeploymentOptionsInternal;
 import org.apache.flink.kubernetes.configuration.KubernetesConfigOptions;
@@ -210,5 +211,12 @@ public abstract class AbstractKubernetesParameters implements KubernetesParamete
     @Override
     public String getPodSchedulerName() {
         return null;
+    }
+
+    @Override
+    public List<String> getKubernetesPodDecorators() {
+        return ConfigUtils.decodeListFromConfig(
+                        flinkConfig, KubernetesConfigOptions.KUBERNETES_POD_DECORATORS, String::new);
+
     }
 }
