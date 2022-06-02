@@ -112,6 +112,11 @@ public class Fabric8FlinkKubeClient implements FlinkKubeClient {
     public void createJobManagerComponent(KubernetesJobManagerSpecification kubernetesJMSpec) {
         final Deployment deployment = kubernetesJMSpec.getDeployment();
         final List<HasMetadata> accompanyingResources = kubernetesJMSpec.getAccompanyingResources();
+        final List<HasMetadata> preAccompanyingResources =
+                kubernetesJMSpec.getPreAccompanyingResources();
+
+        // before create Deployment
+        this.internalClient.resourceList(preAccompanyingResources).createOrReplace();
 
         // create Deployment
         LOG.debug(

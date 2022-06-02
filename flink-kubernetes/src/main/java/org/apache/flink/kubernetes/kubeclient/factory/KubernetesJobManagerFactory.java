@@ -60,6 +60,7 @@ public class KubernetesJobManagerFactory {
             throws IOException {
         FlinkPod flinkPod = Preconditions.checkNotNull(podTemplate).copy();
         List<HasMetadata> accompanyingResources = new ArrayList<>();
+        List<HasMetadata> preAccompanyingResources = new ArrayList<>();
 
         final KubernetesStepDecorator[] stepDecorators =
                 new KubernetesStepDecorator[] {
@@ -76,14 +77,18 @@ public class KubernetesJobManagerFactory {
                 };
 
         for (KubernetesStepDecorator stepDecorator : stepDecorators) {
+            preAccompanyingResources.addAll(stepDecorator.buildPreAccompanyingKubernetesResources());
             flinkPod = stepDecorator.decorateFlinkPod(flinkPod);
             accompanyingResources.addAll(stepDecorator.buildAccompanyingKubernetesResources());
         }
+        // Add all prepared AccompanyingResources to refresh owner reference
+        accompanyingResources.addAll(preAccompanyingResources);
 
         final Deployment deployment =
                 createJobManagerDeployment(flinkPod, kubernetesJobManagerParameters);
 
-        return new KubernetesJobManagerSpecification(deployment, accompanyingResources);
+        return new KubernetesJobManagerSpecification(deployment, accompanyingResources,
+                preAccompanyingResources);
     }
 
     private static Deployment createJobManagerDeployment(

@@ -43,4 +43,6 @@ public interface KubernetesStepDecorator {
      * feature. This could only be applicable on the client-side submission process.
      */
     List<HasMetadata> buildAccompanyingKubernetesResources() throws IOException;
+
+    List<HasMetadata> buildPreAccompanyingKubernetesResources();
 }
