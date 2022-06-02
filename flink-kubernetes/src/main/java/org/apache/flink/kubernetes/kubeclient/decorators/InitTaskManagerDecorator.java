@@ -101,6 +101,7 @@ public class InitTaskManagerDecorator extends AbstractKubernetesStepDecorator {
                         kubernetesTaskManagerParameters.getTolerations().stream()
                                 .map(e -> KubernetesToleration.fromMap(e).getInternalResource())
                                 .collect(Collectors.toList()))
+                .withSchedulerName(kubernetesTaskManagerParameters.getPodSchedulerName())
                 .endSpec();
 
         final Container basicMainContainer = decorateMainContainer(flinkPod.getMainContainer());

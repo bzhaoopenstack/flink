@@ -178,4 +178,9 @@ public class KubernetesTaskManagerParameters extends AbstractKubernetesParameter
     public ContaineredTaskManagerParameters getContaineredTaskManagerParameters() {
         return containeredTaskManagerParameters;
     }
+
+    @Override
+    public String getPodSchedulerName() {
+        return flinkConfig.get(KubernetesConfigOptions.TASK_MANAGER_POD_SCHEDULER_NAME);
+    }
 }

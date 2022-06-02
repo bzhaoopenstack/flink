@@ -110,4 +110,6 @@ public interface KubernetesParameters {
      * container(s).
      */
     List<Map<String, String>> getEnvironmentsFromSecrets();
+
+    String getPodSchedulerName();
 }

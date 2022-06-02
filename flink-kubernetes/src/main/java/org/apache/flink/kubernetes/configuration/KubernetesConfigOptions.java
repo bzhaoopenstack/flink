@@ -451,6 +451,26 @@ public class KubernetesConfigOptions {
                                     + KUBERNETES_POD_TEMPLATE_FILE_KEY
                                     + "' will be used.");
 
+    public static final ConfigOption<String> JOB_MANAGER_POD_SCHEDULER_NAME =
+            key("kubernetes.jobmanager.scheduler-name")
+                    .stringType()
+                    .defaultValue("default-scheduler")
+                    .withDescription(
+                            "Specify the kubernetes pod scheduler for jobmanager pods of deployment. "
+                                    + "The default value is using the kubernetes default pod scheduler. "
+                                    + "For customrized kubernetes pod scheduler, allow to set pod scheduler "
+                                    + "for customerized pod schduling.");
+
+    public static final ConfigOption<String> TASK_MANAGER_POD_SCHEDULER_NAME =
+            key("kubernetes.taskmanager.scheduler-name")
+                    .stringType()
+                    .defaultValue("default-scheduler")
+                    .withDescription(
+                            "Specify the kubernetes pod scheduler for taskmanager pods of deployment. "
+                                    + "The default value is using the kubernetes default pod scheduler. "
+                                    + "For customrized kubernetes pod scheduler, allow to set pod scheduler "
+                                    + "for customerized pod schduling.");
+
     /**
      * This option is here only for documentation generation, it is the fallback key of
      * JOB_MANAGER_POD_TEMPLATE and TASK_MANAGER_POD_TEMPLATE.
