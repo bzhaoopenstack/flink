@@ -200,4 +200,9 @@ public class KubernetesJobManagerParameters extends AbstractKubernetesParameters
         }
         return replicas;
     }
+
+    @Override
+    public String getPodSchedulerName() {
+        return flinkConfig.get(KubernetesConfigOptions.JOB_MANAGER_POD_SCHEDULER_NAME);
+    }
 }

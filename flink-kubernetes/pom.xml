@@ -31,9 +31,27 @@ under the License.
 	<packaging>jar</packaging>
 
 	<properties>
-		<kubernetes.client.version>5.5.0</kubernetes.client.version>
+		<kubernetes.client.version>5.12.2</kubernetes.client.version>
+		<volcano.src.exclude>**/*Volcano*.java</volcano.src.exclude>
+		<volcano.model.include></volcano.model.include>
 	</properties>
 
+	<profiles>
+		<profile>
+			<id>volcano</id>
+			<properties>
+				<volcano.src.exclude></volcano.src.exclude>
+				<volcano.model.include>io.fabric8:volcano-model-*</volcano.model.include>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>io.fabric8</groupId>
+					<artifactId>volcano-model-v1beta1</artifactId>
+					<version>${kubernetes.client.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 	<dependencies>
 
 		<!-- core dependencies  -->
@@ -90,88 +108,98 @@ under the License.
 	</dependencies>
 
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>shade-flink</id>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<artifactSet>
-								<includes combine.children="append">
-									<include>io.fabric8:kubernetes-client</include>
-									<include>io.fabric8:kubernetes-model-*</include>
-									<include>io.fabric8:zjsonpatch</include>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<excludes>${volcano.src.exclude}</excludes>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-shade-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>shade-flink</id>
+							<phase>package</phase>
+							<goals>
+								<goal>shade</goal>
+							</goals>
+							<configuration>
+								<artifactSet>
+									<includes combine.children="append">
+										<include>io.fabric8:kubernetes-client</include>
+										<include>io.fabric8:kubernetes-model-*</include>
+										<include>io.fabric8:zjsonpatch</include>
+										<include>${volcano.model.include}</include>
 
-									<!-- Shade all the dependencies of kubernetes client  -->
-									<include>com.fasterxml.jackson.core:jackson-core</include>
-									<include>com.fasterxml.jackson.core:jackson-annotations</include>
-									<include>com.fasterxml.jackson.core:jackson-databind</include>
-									<include>com.fasterxml.jackson.dataformat:jackson-dataformat-yaml</include>
-									<include>com.fasterxml.jackson.datatype:jackson-datatype-jsr310</include>
-									<include>com.squareup.okhttp3:*</include>
-									<include>com.squareup.okio:okio</include>
-									<include>org.yaml:*</include>
-									<include>dk.brics.automaton:*</include>
+										<!-- Shade all the dependencies of kubernetes client  -->
+										<include>com.fasterxml.jackson.core:jackson-core</include>
+										<include>com.fasterxml.jackson.core:jackson-annotations</include>
+										<include>com.fasterxml.jackson.core:jackson-databind</include>
+										<include>com.fasterxml.jackson.dataformat:jackson-dataformat-yaml</include>
+										<include>com.fasterxml.jackson.datatype:jackson-datatype-jsr310</include>
+										<include>com.squareup.okhttp3:*</include>
+										<include>com.squareup.okio:okio</include>
+										<include>org.yaml:*</include>
+										<include>dk.brics.automaton:*</include>
 
-									<include>META-INF/services/org.apache.flink.*</include>
-								</includes>
-							</artifactSet>
-							<filters combine.children="append">
-								<filter>
-									<artifact>*:*</artifact>
-									<excludes>
-										<exclude>*.aut</exclude>
-										<exclude>META-INF/services/*com.fasterxml*</exclude>
-										<exclude>META-INF/proguard/**</exclude>
-										<exclude>OSGI-INF/**</exclude>
-										<exclude>schema/**</exclude>
-										<exclude>*.vm</exclude>
-										<exclude>*.properties</exclude>
-										<exclude>*.xml</exclude>
-										<exclude>META-INF/jandex.idx</exclude>
-										<exclude>license.header</exclude>
-									</excludes>
-								</filter>
-							</filters>
-							<relocations>
-								<relocation>
-									<pattern>com.fasterxml.jackson</pattern>
-									<shadedPattern>org.apache.flink.kubernetes.shaded.com.fasterxml.jackson</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>okhttp3/internal/publicsuffix</pattern>
-									<shadedPattern>META-INF</shadedPattern>
-									<includes>
-										<include>**/NOTICE</include>
+										<include>META-INF/services/org.apache.flink.*</include>
 									</includes>
-								</relocation>
-								<relocation>
-									<pattern>okhttp3</pattern>
-									<shadedPattern>org.apache.flink.kubernetes.shaded.okhttp3</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>okio</pattern>
-									<shadedPattern>org.apache.flink.kubernetes.shaded.okio</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>org.yaml</pattern>
-									<shadedPattern>org.apache.flink.kubernetes.shaded.org.yaml</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>dk.brics.automaton</pattern>
-									<shadedPattern>org.apache.flink.kubernetes.shaded.dk.brics.automaton</shadedPattern>
-								</relocation>
-							</relocations>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
+								</artifactSet>
+								<filters combine.children="append">
+									<filter>
+										<artifact>*:*</artifact>
+										<excludes>
+											<exclude>*.aut</exclude>
+											<exclude>META-INF/services/*com.fasterxml*</exclude>
+											<exclude>META-INF/proguard/**</exclude>
+											<exclude>OSGI-INF/**</exclude>
+											<exclude>schema/**</exclude>
+											<exclude>*.vm</exclude>
+											<exclude>*.properties</exclude>
+											<exclude>*.xml</exclude>
+											<exclude>META-INF/jandex.idx</exclude>
+											<exclude>license.header</exclude>
+										</excludes>
+									</filter>
+								</filters>
+								<relocations>
+									<relocation>
+										<pattern>com.fasterxml.jackson</pattern>
+										<shadedPattern>org.apache.flink.kubernetes.shaded.com.fasterxml.jackson</shadedPattern>
+									</relocation>
+									<relocation>
+										<pattern>okhttp3/internal/publicsuffix</pattern>
+										<shadedPattern>META-INF</shadedPattern>
+										<includes>
+											<include>**/NOTICE</include>
+										</includes>
+									</relocation>
+									<relocation>
+										<pattern>okhttp3</pattern>
+										<shadedPattern>org.apache.flink.kubernetes.shaded.okhttp3</shadedPattern>
+									</relocation>
+									<relocation>
+										<pattern>okio</pattern>
+										<shadedPattern>org.apache.flink.kubernetes.shaded.okio</shadedPattern>
+									</relocation>
+									<relocation>
+										<pattern>org.yaml</pattern>
+										<shadedPattern>org.apache.flink.kubernetes.shaded.org.yaml</shadedPattern>
+									</relocation>
+									<relocation>
+										<pattern>dk.brics.automaton</pattern>
+										<shadedPattern>org.apache.flink.kubernetes.shaded.dk.brics.automaton</shadedPattern>
+									</relocation>
+								</relocations>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 </project>

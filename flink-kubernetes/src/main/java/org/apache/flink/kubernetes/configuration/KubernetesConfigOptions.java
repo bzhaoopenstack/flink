@@ -451,6 +451,39 @@ public class KubernetesConfigOptions {
                                     + KUBERNETES_POD_TEMPLATE_FILE_KEY
                                     + "' will be used.");
 
+    public static final ConfigOption<String> JOB_MANAGER_POD_SCHEDULER_NAME =
+            key("kubernetes.jobmanager.scheduler-name")
+                    .stringType()
+                    .defaultValue("default-scheduler")
+                    .withDescription(
+                            "Specify the kubernetes pod scheduler for jobmanager pods of deployment. "
+                                    + "The default value is using the kubernetes default pod scheduler. "
+                                    + "For customrized kubernetes pod scheduler, allow to set pod scheduler "
+                                    + "for customerized pod schduling.");
+
+    public static final ConfigOption<String> TASK_MANAGER_POD_SCHEDULER_NAME =
+            key("kubernetes.taskmanager.scheduler-name")
+                    .stringType()
+                    .defaultValue("default-scheduler")
+                    .withDescription(
+                            "Specify the kubernetes pod scheduler for taskmanager pods of deployment. "
+                                    + "The default value is using the kubernetes default pod scheduler. "
+                                    + "For customrized kubernetes pod scheduler, allow to set pod scheduler "
+                                    + "for customerized pod schduling.");
+
+    public static final ConfigOption<List<String>> KUBERNETES_POD_DECORATORS =
+            key("kubernetes.pod.decorators")
+                    .stringType()
+                    .asList()
+                    .noDefaultValue()
+                    .withDescription("Class names of a K8S customized decorator implementation.");
+
+    public static final ConfigOption<Map<String, String>> PODGROUP_CONFIG =
+            key("kubernetes.podgroup.config")
+            .mapType()
+            .noDefaultValue()
+            .withDescription("Customized Scheduler Configuration to be set to the JobManager pod."
+                    + "The value should be in the form of key:config1, key:config2.");
     /**
      * This option is here only for documentation generation, it is the fallback key of
      * JOB_MANAGER_POD_TEMPLATE and TASK_MANAGER_POD_TEMPLATE.
