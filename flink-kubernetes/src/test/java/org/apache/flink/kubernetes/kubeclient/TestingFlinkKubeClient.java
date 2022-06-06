@@ -18,6 +18,8 @@
 
 package org.apache.flink.kubernetes.kubeclient;
 
+import io.fabric8.kubernetes.api.model.HasMetadata;
+
 import org.apache.flink.kubernetes.configuration.KubernetesLeaderElectionConfiguration;
 import org.apache.flink.kubernetes.kubeclient.KubernetesSharedWatcher.Watch;
 import org.apache.flink.kubernetes.kubeclient.resources.KubernetesConfigMap;
@@ -212,6 +214,13 @@ public class TestingFlinkKubeClient implements FlinkKubeClient {
     public CompletableFuture<Void> updateServiceTargetPort(
             String serviceName, String portName, int targetPort) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T extends HasMetadata> HasMetadata getResourceByType(
+            Class<T> resourceType,
+            String resourceName) {
+        return null;
     }
 
     public static Builder builder() {

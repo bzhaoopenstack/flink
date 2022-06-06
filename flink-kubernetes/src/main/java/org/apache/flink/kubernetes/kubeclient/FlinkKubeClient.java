@@ -18,6 +18,8 @@
 
 package org.apache.flink.kubernetes.kubeclient;
 
+import io.fabric8.kubernetes.api.model.HasMetadata;
+
 import org.apache.flink.kubernetes.configuration.KubernetesLeaderElectionConfiguration;
 import org.apache.flink.kubernetes.kubeclient.resources.KubernetesConfigMap;
 import org.apache.flink.kubernetes.kubeclient.resources.KubernetesLeaderElector;
@@ -212,6 +214,9 @@ public interface FlinkKubeClient extends AutoCloseable {
      */
     CompletableFuture<Void> updateServiceTargetPort(
             String serviceName, String portName, int targetPort);
+
+    <T extends HasMetadata> HasMetadata getResourceByType(
+            Class<T> resourceType, String resourceName);
 
     /** Callback handler for kubernetes resources. */
     interface WatchCallbackHandler<T> {

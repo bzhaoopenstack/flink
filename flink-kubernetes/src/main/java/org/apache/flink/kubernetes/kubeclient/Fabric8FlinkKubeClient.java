@@ -409,6 +409,13 @@ public class Fabric8FlinkKubeClient implements FlinkKubeClient {
                 kubeClientExecutorService);
     }
 
+    @Override
+    public <T extends HasMetadata> HasMetadata getResourceByType(
+            Class<T> resourceType,
+            String resourceName) {
+        return this.internalClient.resources(resourceType).withName(resourceName).get();
+    }
+
     private void setOwnerReference(Deployment deployment, List<HasMetadata> resources) {
         final OwnerReference deploymentOwnerReference =
                 new OwnerReferenceBuilder()
