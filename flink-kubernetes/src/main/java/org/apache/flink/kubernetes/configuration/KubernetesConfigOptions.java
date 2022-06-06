@@ -478,6 +478,12 @@ public class KubernetesConfigOptions {
                     .noDefaultValue()
                     .withDescription("Class names of a K8S customized decorator implementation.");
 
+    public static final ConfigOption<Map<String, String>> PODGROUP_CONFIG =
+            key("kubernetes.podgroup.config")
+            .mapType()
+            .noDefaultValue()
+            .withDescription("Customized Scheduler Configuration to be set to the JobManager pod."
+                    + "The value should be in the form of key:config1, key:config2.");
     /**
      * This option is here only for documentation generation, it is the fallback key of
      * JOB_MANAGER_POD_TEMPLATE and TASK_MANAGER_POD_TEMPLATE.

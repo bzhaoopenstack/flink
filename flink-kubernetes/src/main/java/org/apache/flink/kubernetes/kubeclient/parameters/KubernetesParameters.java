@@ -22,6 +22,7 @@ import org.apache.flink.kubernetes.configuration.KubernetesConfigOptions;
 
 import io.fabric8.kubernetes.api.model.LocalObjectReference;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -114,4 +115,6 @@ public interface KubernetesParameters {
     String getPodSchedulerName();
 
     List<String> getKubernetesPodDecorators();
+
+    Map<String, String> getPodGroupConfig();
 }

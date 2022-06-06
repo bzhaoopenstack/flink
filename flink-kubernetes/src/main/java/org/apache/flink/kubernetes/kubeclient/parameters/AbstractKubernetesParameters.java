@@ -219,4 +219,10 @@ public abstract class AbstractKubernetesParameters implements KubernetesParamete
                         flinkConfig, KubernetesConfigOptions.KUBERNETES_POD_DECORATORS, String::new);
 
     }
+
+    @Override
+    public Map<String, String> getPodGroupConfig() {
+        return flinkConfig.getOptional(KubernetesConfigOptions.PODGROUP_CONFIG)
+                .orElse(Collections.emptyMap());
+    }
 }

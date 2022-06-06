@@ -80,6 +80,24 @@ public class VolcanoStepDecorator extends AbstractKubernetesStepDecorator {
                     .editOrNewMetadata()
                     .withName("pg-" + fakename)
                     .endMetadata();
+            Map<String, String> podGroupConfig = kubernetesComponentConf.getPodGroupConfig();
+            for (Map.Entry<String, String> stringStringEntry : podGroupConfig.entrySet()) {
+                if (stringStringEntry.getKey().toLowerCase().equals(priorityClassKey)) {
+                    podGroupBuilder
+                            .editOrNewSpec()
+                            .withPriorityClassName(stringStringEntry.getValue())
+                            .endSpec();
+
+                    KubernetesJobManagerParameters kubernetesJobManagerParameters = (KubernetesJobManagerParameters) kubernetesComponentConf;
+                    double jobManagerCPU = kubernetesJobManagerParameters.getJobManagerCPU();
+                    String s = Double.toString(jobManagerCPU);
+
+                    podGroupBuilder.editOrNewSpec().withMinResources(Collections.singletonMap("cpu", new Quantity(s)))
+                            .withMinMember(1)
+                            .withQueue("default")
+                            .endSpec();
+                }
+            }
             return Collections.singletonList(podGroupBuilder.build());
         }
         return Collections.emptyList();
