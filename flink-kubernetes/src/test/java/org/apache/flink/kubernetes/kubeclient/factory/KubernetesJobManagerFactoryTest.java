@@ -468,4 +468,15 @@ class KubernetesJobManagerFactoryTest extends KubernetesJobManagerTestBase {
         assertThat(kubernetesJobManagerSpecification.getDeployment().getSpec().getReplicas())
                 .isEqualTo(JOBMANAGER_REPLICAS);
     }
+
+    @Test
+    void testPrePreparedResourcesWontAffectOriginalProcess() throws IOException {
+        kubernetesJobManagerSpecification =
+                KubernetesJobManagerFactory.buildKubernetesJobManagerSpecification(
+                        flinkPod, kubernetesJobManagerParameters);
+        final List<HasMetadata> prePreparedResources =
+                this.kubernetesJobManagerSpecification.getPrePreparedResources();
+        assertThat(prePreparedResources).hasSize(0);
+        assertThat(prePreparedResources).isEmpty();
+    }
 }
