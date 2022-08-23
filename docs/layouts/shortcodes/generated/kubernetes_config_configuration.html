@@ -75,6 +75,12 @@
             <td>The user-specified secrets to set env variables in Flink container. The value should be in the form of <code class="highlighter-rouge">env:FOO_ENV,secret:foo_secret,key:foo_key;env:BAR_ENV,secret:bar_secret,key:bar_key</code>.</td>
         </tr>
         <tr>
+            <td><h5>kubernetes.decorators.exclude</h5></td>
+            <td style="word-wrap: break-word;">(none)</td>
+            <td>List&lt;String&gt;</td>
+            <td>Specify the excluded build-in decorators class name for jobmanager and taskmanager.</td>
+        </tr>
+        <tr>
             <td><h5>kubernetes.flink.conf.dir</h5></td>
             <td style="word-wrap: break-word;">"/opt/flink/conf"</td>
             <td>String</td>

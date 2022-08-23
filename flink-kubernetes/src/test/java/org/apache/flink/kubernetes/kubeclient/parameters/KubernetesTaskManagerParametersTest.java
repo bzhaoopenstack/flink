@@ -30,8 +30,11 @@ import org.apache.flink.runtime.clusterframework.TaskExecutorProcessUtils;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -201,5 +204,23 @@ class KubernetesTaskManagerParametersTest extends KubernetesTestBase {
     @Test
     void testGetServiceAccountShouldReturnDefaultIfNotExplicitlySet() {
         assertThat(kubernetesTaskManagerParameters.getServiceAccount()).isEqualTo("default");
+    }
+
+    @Test
+    void testGetKubernetesDecoratorExclude() {
+        final List<String> testExcludes =
+                new ArrayList<String>(
+                        Arrays.asList(
+                                "org.test.buildin.decoraters.DecoratorA",
+                                "org.test.buildin.decoraters.DecoratorB"));
+        flinkConfig.set(KubernetesConfigOptions.TASK_MANAGER_DECORATORS_EXCLUDE, testExcludes);
+        assertThat(kubernetesTaskManagerParameters.getKubernetesDecoratorExclude())
+                .isEqualTo(testExcludes);
+    }
+
+    @Test
+    void testGetKubernetesDecoratorExcludeWithDefaultValue() {
+        assertThat(kubernetesTaskManagerParameters.getKubernetesDecoratorExclude())
+                .isEqualTo(Collections.emptyList());
     }
 }

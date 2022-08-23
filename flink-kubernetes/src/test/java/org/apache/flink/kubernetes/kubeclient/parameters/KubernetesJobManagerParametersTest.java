@@ -34,7 +34,11 @@ import org.apache.flink.util.FlinkRuntimeException;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -253,5 +257,23 @@ class KubernetesJobManagerParametersTest extends KubernetesTestBase {
         flinkConfig.set(HighAvailabilityOptions.HA_MODE, HighAvailabilityMode.KUBERNETES.name());
         flinkConfig.set(KubernetesConfigOptions.KUBERNETES_JOBMANAGER_REPLICAS, 2);
         assertThat(kubernetesJobManagerParameters.getReplicas()).isEqualTo(2);
+    }
+
+    @Test
+    void testGetKubernetesDecoratorExclude() {
+        final List<String> testExcludes =
+                new ArrayList<String>(
+                        Arrays.asList(
+                                "org.test.buildin.decoraters.DecoratorA",
+                                "org.test.buildin.decoraters.DecoratorB"));
+        flinkConfig.set(KubernetesConfigOptions.JOB_MANAGER_DECORATORS_EXCLUDE, testExcludes);
+        assertThat(kubernetesJobManagerParameters.getKubernetesDecoratorExclude())
+                .isEqualTo(testExcludes);
+    }
+
+    @Test
+    void testGetKubernetesDecoratorExcludeWithDefaultValue() {
+        assertThat(kubernetesJobManagerParameters.getKubernetesDecoratorExclude())
+                .isEqualTo(Collections.emptyList());
     }
 }
