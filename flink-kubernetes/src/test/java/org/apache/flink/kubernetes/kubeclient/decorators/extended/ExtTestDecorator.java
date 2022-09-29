@@ -39,6 +39,11 @@ public class ExtTestDecorator implements ExtPluginDecorator {
     }
 
     @Override
+    public List<HasMetadata> buildPrePreparedResources() {
+        return null;
+    }
+
+    @Override
     public void configure(AbstractKubernetesParameters kubernetesComponentConf) {
         return;
     }

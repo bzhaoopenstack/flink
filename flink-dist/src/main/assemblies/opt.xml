@@ -137,6 +137,12 @@
 			<destName>flink-shaded-zookeeper-${zookeeper.optional.version}.jar</destName>
 			<fileMode>0644</fileMode>
 		</file>
+		<file>
+			<source>../flink-kubernetes/target/myvolcano.jar</source>
+			<outputDirectory>opt</outputDirectory>
+			<destName>flink-kubernetes-volcano.jar</destName>
+			<fileMode>0644</fileMode>
+		</file>
 	</files>
 	<fileSets>
 		<fileSet>
