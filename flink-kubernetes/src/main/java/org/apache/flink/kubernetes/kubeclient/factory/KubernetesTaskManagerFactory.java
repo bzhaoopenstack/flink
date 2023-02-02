@@ -46,18 +46,19 @@ public class KubernetesTaskManagerFactory {
         FlinkPod flinkPod = Preconditions.checkNotNull(podTemplate).copy();
 
         ArrayList<KubernetesStepDecorator> stepDecorators = new ArrayList<>();
-        Collections.addAll(stepDecorators,
+        Collections.addAll(
+                stepDecorators,
                 new InitTaskManagerDecorator(kubernetesTaskManagerParameters),
                 new EnvSecretsDecorator(kubernetesTaskManagerParameters),
                 new MountSecretsDecorator(kubernetesTaskManagerParameters),
                 new CmdTaskManagerDecorator(kubernetesTaskManagerParameters),
                 new HadoopConfMountDecorator(kubernetesTaskManagerParameters),
                 new KerberosMountDecorator(kubernetesTaskManagerParameters),
-                new FlinkConfMountDecorator(kubernetesTaskManagerParameters)
-        );
+                new FlinkConfMountDecorator(kubernetesTaskManagerParameters));
 
         // load extend step decorators via SPI
-        stepDecorators.addAll(ExtStepDecoratorUtils.loadExtStepDecorators(kubernetesTaskManagerParameters));
+        stepDecorators.addAll(
+                ExtStepDecoratorUtils.loadExtStepDecorators(kubernetesTaskManagerParameters));
         for (KubernetesStepDecorator stepDecorator : stepDecorators) {
             flinkPod = stepDecorator.decorateFlinkPod(flinkPod);
         }

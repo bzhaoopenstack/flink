@@ -51,6 +51,8 @@ public class KubernetesConfigOptions {
     private static final String KUBERNETES_POD_TEMPLATE_FILE_KEY = "kubernetes.pod-template-file";
     private static final String KUBERNETES_POD_SCHEDULER_NAME_KEY = "kubernetes.scheduler-name";
 
+    private static final String KUBERNETES_PODGROUP_CONFIG = "kubernetes.podgroup.config";
+
     public static final ConfigOption<String> CONTEXT =
             key("kubernetes.context")
                     .stringType()
@@ -484,6 +486,12 @@ public class KubernetesConfigOptions {
                                     + "' and '"
                                     + TASK_MANAGER_POD_SCHEDULER_NAME.key()
                                     + "' for jobmanager and taskmanager respectively.");
+
+    public static final ConfigOption<Map<String, String>> POD_GROUP_CONFOG =
+            key(KUBERNETES_PODGROUP_CONFIG)
+                    .mapType()
+                    .defaultValue(null)
+                    .withDescription("the pod group config of volcano");
 
     /**
      * This option is here only for documentation generation, it is the fallback key of

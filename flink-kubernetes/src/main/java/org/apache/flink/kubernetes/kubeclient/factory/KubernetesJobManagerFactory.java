@@ -36,7 +36,6 @@ import org.apache.flink.kubernetes.kubeclient.parameters.KubernetesJobManagerPar
 import org.apache.flink.kubernetes.kubeclient.resources.KubernetesOwnerReference;
 import org.apache.flink.kubernetes.utils.Constants;
 import org.apache.flink.kubernetes.utils.KubernetesUtils;
-
 import org.apache.flink.util.Preconditions;
 
 import io.fabric8.kubernetes.api.model.Container;
@@ -66,7 +65,8 @@ public class KubernetesJobManagerFactory {
         List<HasMetadata> prePreparedResources = new ArrayList<>();
 
         ArrayList<KubernetesStepDecorator> stepDecorators = new ArrayList<>();
-        Collections.addAll(stepDecorators,
+        Collections.addAll(
+                stepDecorators,
                 new InitJobManagerDecorator(kubernetesJobManagerParameters),
                 new EnvSecretsDecorator(kubernetesJobManagerParameters),
                 new MountSecretsDecorator(kubernetesJobManagerParameters),
@@ -76,11 +76,11 @@ public class KubernetesJobManagerFactory {
                 new HadoopConfMountDecorator(kubernetesJobManagerParameters),
                 new KerberosMountDecorator(kubernetesJobManagerParameters),
                 new FlinkConfMountDecorator(kubernetesJobManagerParameters),
-                new PodTemplateMountDecorator(kubernetesJobManagerParameters)
-        );
+                new PodTemplateMountDecorator(kubernetesJobManagerParameters));
 
         // load extend step decorators via SPI
-        stepDecorators.addAll(ExtStepDecoratorUtils.loadExtStepDecorators(kubernetesJobManagerParameters));
+        stepDecorators.addAll(
+                ExtStepDecoratorUtils.loadExtStepDecorators(kubernetesJobManagerParameters));
         for (KubernetesStepDecorator stepDecorator : stepDecorators) {
             prePreparedResources.addAll(stepDecorator.buildPrePreparedResources());
             flinkPod = stepDecorator.decorateFlinkPod(flinkPod);

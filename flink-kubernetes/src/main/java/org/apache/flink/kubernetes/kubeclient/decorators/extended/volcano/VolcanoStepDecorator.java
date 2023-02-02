@@ -1,14 +1,5 @@
 package org.apache.flink.kubernetes.kubeclient.decorators.extended.volcano;
 
-import io.fabric8.kubernetes.api.model.HasMetadata;
-import io.fabric8.kubernetes.api.model.PodBuilder;
-
-import io.fabric8.kubernetes.api.model.Quantity;
-// profile enabled libraries
-import io.fabric8.kubernetes.client.KubernetesClient;
-import io.fabric8.volcano.scheduling.v1beta1.PodGroup;
-import io.fabric8.volcano.scheduling.v1beta1.PodGroupBuilder;
-
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.kubernetes.kubeclient.FlinkKubeClient;
 import org.apache.flink.kubernetes.kubeclient.FlinkKubeClientFactory;
@@ -18,6 +9,11 @@ import org.apache.flink.kubernetes.kubeclient.parameters.AbstractKubernetesParam
 import org.apache.flink.kubernetes.kubeclient.parameters.KubernetesJobManagerParameters;
 import org.apache.flink.kubernetes.kubeclient.parameters.KubernetesTaskManagerParameters;
 
+import io.fabric8.kubernetes.api.model.HasMetadata;
+import io.fabric8.kubernetes.api.model.PodBuilder;
+import io.fabric8.kubernetes.api.model.Quantity;
+import io.fabric8.volcano.scheduling.v1beta1.PodGroupBuilder;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +21,7 @@ import java.util.Map;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
+/** The interface class which should be implemented by plugin decorators. */
 public class VolcanoStepDecorator implements ExtPluginDecorator {
     private static final String DEFAULT_SCHEDULER_NAME = "default-scheduler";
     private AbstractKubernetesParameters kubernetesComponentConf = null;
@@ -33,10 +30,9 @@ public class VolcanoStepDecorator implements ExtPluginDecorator {
     private FlinkKubeClient queryClient = null;
     private String priorityClassKey = "priorityclass";
     private List<HasMetadata> myPreCreateResources = null;
-    //private KubernetesClient testClient = null;
+    // private KubernetesClient testClient = null;
 
-    public VolcanoStepDecorator() {
-    }
+    public VolcanoStepDecorator() {}
 
     @Override
     public void configure(AbstractKubernetesParameters kubernetesComponentConf) {
@@ -45,9 +41,9 @@ public class VolcanoStepDecorator implements ExtPluginDecorator {
         if (this.kubernetesComponentConf instanceof KubernetesTaskManagerParameters) {
             this.isTaskManager = Boolean.TRUE;
         }
-        this.queryClient = FlinkKubeClientFactory.getInstance()
-                .fromConfiguration(this.flinkConfig, "client");
-        //this.testClient = queryClient.getKubernetesClient();
+        this.queryClient =
+                FlinkKubeClientFactory.getInstance().fromConfiguration(this.flinkConfig, "client");
+        // this.testClient = queryClient.getKubernetesClient();
     }
 
     @Override
@@ -61,20 +57,17 @@ public class VolcanoStepDecorator implements ExtPluginDecorator {
         String fakename = this.kubernetesComponentConf.getClusterId();
         if (this.isTaskManager) {
             // Need raise an error if PodGroup doesn't exist
-            //HasMetadata resourceByType = this.queryClient.getResourceByType(
+            // HasMetadata resourceByType = this.queryClient.getResourceByType(
             //        PodGroup.class, "pg-" + fakename);
             return null;
         }
 
-        basicPodBuilder
-                .editOrNewSpec()
-                .withSchedulerName("volcano")
-                .endSpec();
+        basicPodBuilder.editOrNewSpec().withSchedulerName("volcano").endSpec();
 
-        basicPodBuilder.editOrNewMetadata()
-                .withAnnotations(Collections.singletonMap(
-                        "scheduling.k8s.io/group-name",
-                        "pg-" + fakename))
+        basicPodBuilder
+                .editOrNewMetadata()
+                .withAnnotations(
+                        Collections.singletonMap("scheduling.k8s.io/group-name", "pg-" + fakename))
                 .endMetadata();
 
         return new FlinkPod.Builder(flinkPod).withPod(basicPodBuilder.build()).build();
@@ -90,12 +83,8 @@ public class VolcanoStepDecorator implements ExtPluginDecorator {
         if (!this.isTaskManager) {
             String fakename = this.kubernetesComponentConf.getClusterId();
             PodGroupBuilder podGroupBuilder = new PodGroupBuilder();
-            podGroupBuilder
-                    .editOrNewMetadata()
-                    .withName("pg-" + fakename)
-                    .endMetadata();
-            // Map<String, String> podGroupConfig = kubernetesComponentConf.getPodGroupConfig();
-            Map<String, String> podGroupConfig = null;
+            podGroupBuilder.editOrNewMetadata().withName("pg-" + fakename).endMetadata();
+            Map<String, String> podGroupConfig = kubernetesComponentConf.getPodGroupConfig();
             for (Map.Entry<String, String> stringStringEntry : podGroupConfig.entrySet()) {
                 if (stringStringEntry.getKey().toLowerCase().equals(priorityClassKey)) {
                     podGroupBuilder
@@ -103,11 +92,14 @@ public class VolcanoStepDecorator implements ExtPluginDecorator {
                             .withPriorityClassName(stringStringEntry.getValue())
                             .endSpec();
 
-                    KubernetesJobManagerParameters kubernetesJobManagerParameters = (KubernetesJobManagerParameters) kubernetesComponentConf;
+                    KubernetesJobManagerParameters kubernetesJobManagerParameters =
+                            (KubernetesJobManagerParameters) kubernetesComponentConf;
                     double jobManagerCPU = kubernetesJobManagerParameters.getJobManagerCPU();
                     String s = Double.toString(jobManagerCPU);
 
-                    podGroupBuilder.editOrNewSpec().withMinResources(Collections.singletonMap("cpu", new Quantity(s)))
+                    podGroupBuilder
+                            .editOrNewSpec()
+                            .withMinResources(Collections.singletonMap("cpu", new Quantity(s)))
                             .withMinMember(1)
                             .withQueue("default")
                             .endSpec();
