@@ -24,23 +24,24 @@ import org.apache.flink.kubernetes.kubeclient.parameters.AbstractKubernetesParam
 import io.fabric8.kubernetes.api.model.HasMetadata;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /** The test class for testing the plugin decorators. */
 public class ExtTestDecorator implements ExtPluginDecorator {
     @Override
     public FlinkPod decorateFlinkPod(FlinkPod flinkPod) {
-        return null;
+        return flinkPod;
     }
 
     @Override
     public List<HasMetadata> buildAccompanyingKubernetesResources() throws IOException {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
     public List<HasMetadata> buildPrePreparedResources() {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
