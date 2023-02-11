@@ -138,7 +138,7 @@
 			<fileMode>0644</fileMode>
 		</file>
 		<file>
-			<source>../flink-kubernetes/target/myvolcano.jar</source>
+			<source>../flink-kubernetes/target/flink-kubernetes-volcano.jar</source>
 			<outputDirectory>opt</outputDirectory>
 			<destName>flink-kubernetes-volcano.jar</destName>
 			<fileMode>0644</fileMode>

@@ -212,7 +212,7 @@ class KubernetesJobManagerFactoryTest extends KubernetesJobManagerTestBase {
 
         final List<HasMetadata> resultAdditionalResources =
                 this.kubernetesJobManagerSpecification.getAccompanyingResources();
-        assertThat(resultAdditionalResources).hasSize(5);
+        assertThat(resultAdditionalResources).hasSize(6);
 
         final List<HasMetadata> resultServices =
                 resultAdditionalResources.stream()
@@ -476,7 +476,6 @@ class KubernetesJobManagerFactoryTest extends KubernetesJobManagerTestBase {
                         flinkPod, kubernetesJobManagerParameters);
         final List<HasMetadata> prePreparedResources =
                 this.kubernetesJobManagerSpecification.getPrePreparedResources();
-        assertThat(prePreparedResources).hasSize(0);
-        assertThat(prePreparedResources).isEmpty();
+        assertThat(prePreparedResources).hasSize(1);
     }
 }

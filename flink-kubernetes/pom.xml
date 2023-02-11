@@ -127,7 +127,7 @@ under the License.
 								</relocation>
 							</relocations>
 							<outputFile>
-								myvolcano.jar
+								flink-kubernetes-volcano.jar
 							</outputFile>
 						</configuration>
 					</execution>
